@@ -14,9 +14,14 @@ class DukeTest {
     public void sampleTest4() {
         assertTrue(true);
     }
-  
+
     @Test
     public void listTest() {
+        assertTrue(true);
+    }
+
+    @Test
+    public void sampleExit() {
         assertTrue(true);
     }
 }
@@ -24,3 +29,4 @@ class DukeTest {
 /*
 Bryan: Added some comments in the JUnit code
  */
+
