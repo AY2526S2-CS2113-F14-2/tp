@@ -1,5 +1,22 @@
+/**
+ * Bitbites.java
+ * 
+ * This is the main entry point for the Bitbites chatbot application.
+ * It initializes and orchestrates the core components (UserInterface, Parser, FoodList)
+ * and manages the main application loop for command processing.
+ * 
+ * Dependencies:
+ * - UserInterface: For displaying messages and reading user input
+ * - Parser: For parsing and executing user commands
+ * - FoodList: For managing the list of food items
+ * - BitbitesException: For custom exception handling
+ */
 package seedu.duke;
 
+/**
+ * Bitbites is the main chatbot class that manages the overall application flow.
+ * It coordinates user input, command parsing, and food item management.
+ */
 public class Bitbites {
 
     /* The user interface for the chatbot. */

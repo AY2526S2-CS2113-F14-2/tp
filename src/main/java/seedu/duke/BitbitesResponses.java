@@ -1,7 +1,18 @@
-// BitbitesResponses stores the responses used by the chatbot.
-// It is used by the UserInterface class to display messages to the user.
+/**
+ * BitbitesResponses.java
+ * 
+ * This file stores all predefined response messages used throughout the application.
+ * Centralizes message strings for consistency and easier maintenance.
+ * 
+ * Dependencies:
+ * - None (contains only static string constants)
+ */
 package seedu.duke;
 
+/**
+ * BitbitesResponses provides centralized storage for all application messages.
+ * Includes greetings, error messages, and feature confirmation messages.
+ */
 public class BitbitesResponses {
     // Greetings section
     static String welcomeMessage = "Hello from\n" + " ____        _        \n"

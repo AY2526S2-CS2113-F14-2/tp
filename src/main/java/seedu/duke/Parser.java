@@ -1,5 +1,22 @@
+/**
+ * Parser.java
+ * 
+ * This file contains the Parser class responsible for interpreting user commands.
+ * Routes user input to appropriate command handlers (list, add, exit).
+ * 
+ * Dependencies:
+ * - FoodList: For accessing and modifying the food items list
+ * - UserInterface: For providing feedback to users
+ * - BitbitesException: For error handling
+ * - BitbitesResponses: For error messages
+ */
 package seedu.duke;
 
+/**
+ * Parser interprets user commands and executes the appropriate handlers.
+ * Supports commands: list, list d/<date>, add, and exit.
+ * Throws BitbitesException for unknown commands.
+ */
 public class Parser {
 
     public Parser() {

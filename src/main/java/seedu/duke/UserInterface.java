@@ -1,7 +1,21 @@
+/**
+ * UserInterface.java
+ * 
+ * This file handles all user input/output operations for the chatbot.
+ * Displays messages to the user and reads commands from standard input.
+ * 
+ * Dependencies:
+ * - java.util.Scanner: For reading user input from console
+ * - BitbitesResponses: For accessing predefined response messages
+ */
 package seedu.duke;
 
 import java.util.Scanner;
 
+/**
+ * UserInterface manages all interactions between the chatbot and the user.
+ * Handles display of messages and reading of user commands from the console.
+ */
 public class UserInterface {
     /* The responses used by the chatbot. */
     static BitbitesResponses bitbitesResponses = new BitbitesResponses();

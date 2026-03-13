@@ -1,6 +1,18 @@
+/**
+ * Food.java
+ * 
+ * This file defines the Food data model representing a single food item.
+ * Stores food information including name, calories, protein, and date.
+ * 
+ * Dependencies:
+ * - None (standalone data model)
+ */
 package seedu.duke;
 
-// Design for command: add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G d/DATE
+/**
+ * Food represents a single food item with nutritional and temporal information.
+ * Design follows the format: add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G d/DATE
+ */
 public class Food {
     private String name;
     private int calories;
