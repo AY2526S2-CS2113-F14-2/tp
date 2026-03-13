@@ -3,34 +3,38 @@ package seedu.duke;
 import java.util.Scanner;
 
 public class Bitbites {
+
+    /* The user interface for the chatbot. */
+    private static UserInterface ui = new UserInterface();
+
+    /* The parser for interpreting user commands. */
+    private static Parser parser = new Parser();
+
+    /* The list of food items tracked by the chatbot. */
+    private static FoodList foods = new FoodList();
+
+    /**
+     * Constructor for the Bitbites chatbot. Initializes the chatbot and its components.
+     */
+    public Bitbites() {
+        // No implementation needed for the constructor as of now
+    }
+
     /**
      * Main entry-point for the java.duke.Duke application.
      */
     public static void main(String[] args) {
-        String logo = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
-        System.out.println("Hello from\n" + logo);
-        System.out.println("What is your name?");
+        
+        ui.showWelcome();
 
-        Scanner in = new Scanner(System.in);
-        System.out.println("Hello " + in.nextLine());
+        boolean isExit = false;
+        while (!isExit) {
+            try {
+                String fullCommand = ui.readCommand();
+                isExit = Parser.parse(fullCommand, foods, ui);
+            } catch (BitbitesException e) {
+                ui.showError(e.getMessage());
+            }
+        }
     }
-
-    // TODO: List all food items
-
-    // TODO: List food items for a specific date
-
-    // TODO: Add - Bryan
-    /*
-        Command - Add (Bryan)
-        Adds a food item to the list with its calorie and protein information
-
-        Format:
-        add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G d/DATE
-    */
-
-    // TODO: Exit Command - rayminQAQ
 }
