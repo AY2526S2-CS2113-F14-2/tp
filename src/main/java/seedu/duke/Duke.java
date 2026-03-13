@@ -19,3 +19,11 @@ public class Duke {
         System.out.println("Hello " + in.nextLine());
     }
 }
+
+/*
+Command - Add (Bryan)
+Adds a food item to the list with its calorie and protein information
+
+Format:
+add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G d/DATE
+ */
