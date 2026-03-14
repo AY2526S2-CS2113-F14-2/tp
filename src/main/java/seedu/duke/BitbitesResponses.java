@@ -25,7 +25,11 @@ public class BitbitesResponses {
     static String unknownCommand = "OOPS!!! I'm sorry, but I don't know what that means :-( ";
     static String errorMessage = "OOPS!!! I'm sorry, but I don't know what that means :-( ";
 
-    // Features section
-    static String addMessage = "Got it. I've added the food item!"; // EXAMPLE
+    // Command-Add Messages
+    static String addMessage = "Got it. I've added the food item!";
+    static String addFormatReminder = "Please use the correct format: " +
+            "add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G d/DATE";
+
+    // Exit Message
     static String exitMessage = "Bye. Hope to see you again soon!";
 }
