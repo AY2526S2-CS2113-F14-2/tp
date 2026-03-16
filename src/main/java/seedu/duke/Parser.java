@@ -14,7 +14,7 @@ package seedu.duke;
 
 /**
  * Parser interprets user commands and executes the appropriate handlers.
- * Supports commands: list, list d/<date>, add, and exit.
+ * Supports commands: list, list d/DATE, add, and exit.
  * Throws BitbitesException for unknown commands.
  */
 public class Parser {
