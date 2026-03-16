@@ -71,4 +71,19 @@ public class Parser {
             add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G d/DATE
         */
     }
+
+    private static void handleDelete(String fullCommand, FoodList foodList, UserInterface ui) {
+        String[] parts = fullCommand.split(" ", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new BitbitesException("Please specify an item number. Format: delete INDEX");
+        }
+        int index;
+        try {
+            index = Integer.parseInt(parts[1].trim()) - 1;
+        } catch (NumberFormatException e) {
+            throw new BitbitesException("Invalid index format. Please enter a number.");
+        }
+        Food removed = foodList.deleteFood(index);
+        ui.showDeletedFood(removed, foodList.size());
+    }
 }

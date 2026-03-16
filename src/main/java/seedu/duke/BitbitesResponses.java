@@ -24,8 +24,10 @@ public class BitbitesResponses {
     // Errors & Exceptions Handled by the chatbot section
     static String unknownCommand = "OOPS!!! I'm sorry, but I don't know what that means :-( ";
     static String errorMessage = "OOPS!!! I'm sorry, but I don't know what that means :-( ";
+    static String deleteErrorMessage = "OOPS!!! Invalid index. Please provide a valid item number.";
 
     // Features section
     static String addMessage = "Got it. I've added the food item!"; // EXAMPLE
+    static String deleteMessage = "Got it. I've removed the food item!";
     static String exitMessage = "Bye. Hope to see you again soon!";
 }
