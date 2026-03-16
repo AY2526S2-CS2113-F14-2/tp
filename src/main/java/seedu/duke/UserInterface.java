@@ -30,6 +30,12 @@ public class UserInterface {
     /* Reads a command from the user input. */
     public String readCommand() {
         // TODO: Implement read command logic
+        String input = scanner.nextLine();
+
+        if (input.startsWith("list")) {
+            return "list";
+        }
+
         return this.scanner.nextLine();
     }
 

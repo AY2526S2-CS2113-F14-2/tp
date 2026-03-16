@@ -58,4 +58,14 @@ public class Food {
     public void setDate(String date) {
         this.date = date;
     }
+
+    /**
+     * Returns a string representation of the food item to be displayed in the list.
+     *
+     * @return A formatted string representing the food item details.
+     */
+    @Override
+    public String toString() {
+        return name + " (" + calories + "kcal, " + protein + "g protein) on " + date;
+    }
 }

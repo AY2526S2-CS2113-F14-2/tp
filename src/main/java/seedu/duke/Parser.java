@@ -49,6 +49,11 @@ public class Parser {
     // TODO: List all food items
     private static void handleListAll(String fullCommand, FoodList foodList, UserInterface ui) {
         // Implementation for listing all food items
+        System.out.println("Here are the food items in your list:");
+
+        for (int i = 0; i < foodList.size(); i++) {
+            System.out.println((i + 1) + ". " + foodList.get(i));
+        }
     }
 
     // TODO: List food items for a specific date
