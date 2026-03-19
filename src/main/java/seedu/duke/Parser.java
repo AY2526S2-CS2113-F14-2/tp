@@ -37,8 +37,10 @@ public class Parser {
         fullCommand = fullCommand.trim();
 
         if (fullCommand.startsWith("list d/")) {
+            logger.log(Level.INFO, "Attempting to list food items from date");
             handleListFromDate(fullCommand, foodList, ui);
         } else if (fullCommand.equals("list")) {
+            logger.log(Level.INFO, "Attempting to list all food items");
             handleListAll(fullCommand, foodList, ui);
         } else if (fullCommand.startsWith("add ")) {
             handleAdd(fullCommand, foodList, ui);
@@ -74,6 +76,9 @@ public class Parser {
         if (words.length < 2) {
             throw new BitbitesException("OOPS!!! Missing date. Please provide a valid date.");
         }
+
+        assert words[0].equals("list") : "List command should be 'list d/DATE'";
+        assert !words[1].isEmpty() : "List command is missing DATE";
 
         String date = words[1];
         System.out.println(BitbitesResponses.listFromDateMessage + date + ":");
