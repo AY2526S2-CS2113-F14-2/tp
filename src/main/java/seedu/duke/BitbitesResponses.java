@@ -47,6 +47,6 @@ public class BitbitesResponses {
             + "  add n/NAME c/CALORIES p/PROTEIN d/DATE  - Add a food item\n"
             + "  delete INDEX                            - Delete a food item by index\n"
             + "  help                                    - Show help message\n"
-            + "  exit                                    - Exit the application"
-            + "  Date format: YYYY-MM-YY";
+            + "  exit                                    - Exit the application\n"
+            + "  (Date format: YYYY-MM-YY)";
 }
