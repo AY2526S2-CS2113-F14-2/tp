@@ -43,7 +43,7 @@ public class BitbitesResponses {
     // Help Message
     static String helpMessage = "Here are the available commands:\n"
             + "  list                                    - List all food items\n"
-            + "  list d/DATE                             - List food items for a specific date\n"
+            + "  list d/DATE                             - List food items for a specific date. Date format: YYYY-MM-YY\n"
             + "  add n/NAME c/CALORIES p/PROTEIN d/DATE  - Add a food item\n"
             + "  delete INDEX                            - Delete a food item by index\n"
             + "  help                                    - Show help message\n"
