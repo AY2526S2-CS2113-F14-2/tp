@@ -40,6 +40,7 @@ public class UserInterface {
 
         // Get user input for name and greet them
         System.out.println("Hello " + this.scanner.nextLine());
+        System.out.println(BitbitesResponses.helpMessage);
     }
 
     /* Show an error message to the user. */

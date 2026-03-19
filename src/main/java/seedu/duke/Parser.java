@@ -167,21 +167,33 @@ public class Parser {
     }
 
     private static void handleHelp(UserInterface ui) {
+        assert ui != null : "UserInterface should not be null";
+        logger.log(Level.INFO, "Showing help message");
         ui.showHelp();
     }
 
     private static void handleDelete(String fullCommand, FoodList foodList, UserInterface ui) {
+        assert foodList != null : "FoodList should not be null";
+        logger.log(Level.INFO, "Attempting to delete: " + fullCommand);
+
         String[] parts = fullCommand.split(" ", 2);
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            logger.log(Level.WARNING, "Missing index in delete command");
             throw new BitbitesException("Please specify an item number. Format: delete INDEX");
         }
         int index;
         try {
             index = Integer.parseInt(parts[1].trim()) - 1;
         } catch (NumberFormatException e) {
+            logger.log(Level.WARNING, "Invalid index format in delete command: " + parts[1]);
             throw new BitbitesException("Invalid index format. Please enter a number.");
         }
+        assert index >= 0 : "Index should be non-negative after conversion";
+        int sizeBefore = foodList.size();
         Food removed = foodList.deleteFood(index);
+
+        assert foodList.size() == sizeBefore - 1 : "FoodList size should decrease by 1 after delete";
+        logger.log(Level.INFO, "Successfully deleted food: " + removed.getName());
         ui.showDeletedFood(removed, foodList.size());
     }
 }
