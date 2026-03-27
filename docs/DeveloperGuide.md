@@ -52,6 +52,15 @@ When the user inputs the `add` command followed by the required parameters, `han
 Below is the sequence diagram illustrating the execution flow of the `handleAdd` method:
 
 ![handleAdd sequence diagram](uml/add.png)
+### 3. Exiting the Application `exit`
+The `exit` feature allows users to terminate the application safely when they are done.  
+It is implemented as a direct command branch in `Parser.parse(...)` and integrates with the main application loop in `Bitbites`.
+
+#### 3.1 Implementation Details
+When the user inputs `exit`, the following execution flow occurs:
+
+1. **Command Matching:** `Parser.parse(...)` checks whether the trimmed input is exactly `exit`.
+2. **User Feedback:** The parser invokes `ui.showExit()` to display a farewell message.
 
 ## Product scope
 ### Target user profile
