@@ -8,9 +8,11 @@
  * - java.util.Scanner: For reading user input from console
  * - BitbitesResponses: For accessing predefined response messages
  */
-package seedu.duke;
+package ui;
 
 import java.util.Scanner;
+import seedu.bitbites.BitbitesResponses;
+import model.Food;
 
 /**
  * UserInterface manages all interactions between the chatbot and the user.
@@ -45,7 +47,7 @@ public class UserInterface {
 
     /* Show an error message to the user. */
     public void showError(String message) {
-        System.out.println(bitbitesResponses.errorMessage);
+        System.out.println(message);
     }
 
     /* Show the exit message to the user. */

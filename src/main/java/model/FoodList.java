@@ -8,7 +8,10 @@
  * - Food: Data model for individual food items
  * - java.util.ArrayList: For storing food items
  */
-package seedu.duke;
+package model;
+
+import seedu.bitbites.BitbitesException;
+import seedu.bitbites.BitbitesResponses;
 
 /**
  * FoodList manages a collection of Food objects.

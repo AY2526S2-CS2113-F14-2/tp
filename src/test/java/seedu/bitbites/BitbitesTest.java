@@ -1,8 +1,13 @@
-package seedu.duke;
+package seedu.bitbites;
 
 
+import model.Food;
+import model.FoodList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import parser.Parser;
+import ui.UserInterface;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
