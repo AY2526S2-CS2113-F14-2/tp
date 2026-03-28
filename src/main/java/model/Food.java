@@ -7,7 +7,7 @@
  * Dependencies:
  * - None (standalone data model)
  */
-package seedu.duke;
+package model;
 
 /**
  * Food represents a single food item with nutritional and temporal information.

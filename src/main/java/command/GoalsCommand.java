@@ -1,4 +1,7 @@
-package seedu.duke;
+package command;
+
+import model.FoodList;
+import ui.UserInterface;
 
 // TODO: Implement Goals command (v2.0)
 public class GoalsCommand extends Command {

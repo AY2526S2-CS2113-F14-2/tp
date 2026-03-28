@@ -7,7 +7,7 @@
  * Dependencies:
  * - java.lang.RuntimeException: Parent exception class
  */
-package seedu.duke;
+package seedu.bitbites;
 
 /**
  * BitbitesException is a custom RuntimeException for application-specific errors.

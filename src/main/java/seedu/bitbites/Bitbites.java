@@ -11,7 +11,12 @@
  * - FoodList: For managing the list of food items
  * - BitbitesException: For custom exception handling
  */
-package seedu.duke;
+package seedu.bitbites;
+
+import command.Command;
+import model.FoodList;
+import parser.Parser;
+import ui.UserInterface;
 
 /**
  * Bitbites is the main chatbot class that manages the overall application flow.
@@ -45,7 +50,8 @@ public class Bitbites {
         while (!isExit) {
             try {
                 String fullCommand = ui.readCommand();
-                isExit = Parser.parse(fullCommand, foods, ui);
+                Command command = Parser.parse(fullCommand);
+                isExit = command.execute(foods, ui);
 
                 // Assertion
                 assert !isExit || fullCommand.trim().equals("exit") : "Exit command should be 'exit'";
