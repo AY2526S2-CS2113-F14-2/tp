@@ -150,7 +150,9 @@ public class GoalsCommand extends Command {
         int nearest = Integer.MAX_VALUE;
         String nearestPrefix = null;
         for (String p : prefixes) {
-            if (p.equals(currentPrefix)) continue;
+            if (p.equals(currentPrefix)) {
+                continue;
+            }
             int idx = command.indexOf(p);
             if (idx > currentIndex && idx < nearest) {
                 nearest = idx;
