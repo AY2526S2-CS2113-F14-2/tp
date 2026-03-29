@@ -5,7 +5,6 @@ import model.Food;
 import ui.UserInterface;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 
 // @@author bryanyeo3125
 public class GoalsCommand extends Command {
@@ -104,25 +103,33 @@ public class GoalsCommand extends Command {
         try {
             if (fullCommand.contains("dc/")) {
                 int val = Integer.parseInt(extractValue(fullCommand, "dc/", nextPrefix(fullCommand, "dc/")));
-                if (val < 0) throw new NumberFormatException();
+                if (val < 0) {
+                    throw new NumberFormatException();
+                }
                 dailyCalorieGoal = val;
                 System.out.println("Daily calorie goal set to " + val + " kcal.");
             }
             if (fullCommand.contains("dp/")) {
                 double val = Double.parseDouble(extractValue(fullCommand, "dp/", nextPrefix(fullCommand, "dp/")));
-                if (val < 0) throw new NumberFormatException();
+                if (val < 0) {
+                    throw new NumberFormatException();
+                }
                 dailyProteinGoal = val;
                 System.out.println("Daily protein goal set to " + val + "g.");
             }
             if (fullCommand.contains("wc/")) {
                 int val = Integer.parseInt(extractValue(fullCommand, "wc/", nextPrefix(fullCommand, "wc/")));
-                if (val < 0) throw new NumberFormatException();
+                if (val < 0) {
+                    throw new NumberFormatException();
+                }
                 weeklyCalorieGoal = val;
                 System.out.println("Weekly calorie goal set to " + val + " kcal.");
             }
             if (fullCommand.contains("wp/")) {
                 double val = Double.parseDouble(extractValue(fullCommand, "wp/", nextPrefix(fullCommand, "wp/")));
-                if (val < 0) throw new NumberFormatException();
+                if (val < 0) {
+                    throw new NumberFormatException();
+                }
                 weeklyProteinGoal = val;
                 System.out.println("Weekly protein goal set to " + val + "g.");
             }
