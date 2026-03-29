@@ -42,13 +42,13 @@ public class BitbitesResponses {
     public static String exitMessage = "Bye. Hope to see you again soon!";
     // Help Message
     public static String helpMessage = "Here are the available commands:\n"
-            + "  list                                              - List all food items\n"
-            + "  list d/DATE                                       - List food items for a specific date\n"
-            + "  add n/NAME c/CALORIES p/PROTEIN d/DATE            - Add a food item\n"
-            + "  delete INDEX                                      - Delete a food item by index\n"
-            + "  goals                                             - View daily and weekly goal progress\n"
-            + "  goals set dc/CAL dp/PROT wc/CAL wp/PROT          - Set daily/weekly calorie and protein goals\n"
-            + "  help                                              - Show help message\n"
-            + "  exit                                              - Exit the application\n"
+            + "  list                                    - List all food items\n"
+            + "  list d/DATE                             - List food items for a specific date\n"
+            + "  add n/NAME c/CALORIES p/PROTEIN d/DATE  - Add a food item\n"
+            + "  delete INDEX                            - Delete a food item by index\n"
+            + "  goals                                   - View daily and weekly goal progress\n"
+            + "  goals set dc/CAL dp/PROT wc/CAL wp/PROT - Set daily/weekly calorie and protein goals\n"
+            + "  help                                    - Show help message\n"
+            + "  exit                                    - Exit the application\n"
             + "  (Date format: DD-MM-YYYY)";
 }
