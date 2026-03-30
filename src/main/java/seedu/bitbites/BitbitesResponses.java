@@ -55,6 +55,13 @@ public class BitbitesResponses {
             + "  help                                    - Show help message\n"
             + "  edit INDEX                              - Edit an existing food item\n"
             + "  (Optional: [n/NAME] [c/CALORIES] [p/PROTEIN] [d/DATE])\n"
+            + "  summary d/DATE                          - Show summary for a specific date\n"
+            + "  summary from/DATE1 to/DATE2             - Show trend between two dates\n"
+            + "  summary compare d/DATE1 d/DATE2         - Compare two days\n"
+            + "  history                                 - Show all food history\n"
+            + "  history /top N                          - Show top N highest calorie days\n"
+            + "  history /best N                         - Show top N lowest calorie days\n"
+            + "  history streak                          - Show tracking streak\n"
             + "  exit                                    - Exit the application\n"
             + "  (Date format: DD-MM-YYYY)";
 }
