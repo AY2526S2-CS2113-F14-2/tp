@@ -13,10 +13,13 @@ import command.DeleteCommand;
 import command.HelpCommand;
 import command.ListByDateCommand;
 import command.EditCommand;
+import command.ListCommand;
 import model.Food;
 import model.FoodList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import parser.Parser;
 import ui.UserInterface;
 
@@ -36,12 +39,6 @@ class BitbitesTest {
     @Test
     public void sampleTest() {
         assertTrue(true);
-    }
-
-    @Test
-    void parser_listByDate_returnsCorrectCommand() {
-        Command command = Parser.parse("list d/2025-03-14");
-        assertInstanceOf(ListByDateCommand.class, command);
     }
 
     @Test
@@ -169,10 +166,57 @@ class BitbitesTest {
         );
     }
 
+    //@@author j-kennethh
+    // ── ListCommand ───────────────────────────────────────
     @Test
-    public void listTest() {
-        assertTrue(true);
+    void parser_list_returnsCorrectCommand() {
+        Command command = Parser.parse("list");
+        assertInstanceOf(ListCommand.class, command);
     }
+
+    @Test
+    void listCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse("list").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void listCommand_emptyList_executesWithoutError() {
+        FoodList emptyList = new FoodList();
+        boolean isExit = Parser.parse("list").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    // ── ListByDate Command ───────────────────────────────────────
+    @Test
+    void parser_listByDate_returnsCorrectCommand() {
+        Command command = Parser.parse("list d/2026-03-14");
+        assertInstanceOf(ListByDateCommand.class, command);
+    }
+
+    @Test
+    void listByDateCommand_invalidPrefix_throwsAssertError() {
+        ListByDateCommand badCommand = new ListByDateCommand("show d/2026-03-16");
+        assertThrows(AssertionError.class, () -> badCommand.execute(foodList, ui));
+    }
+
+    @Test
+    void listByDateCommand_executeWithMatchingDate_returnsFalse() {
+        boolean isExit = Parser.parse("list d/2026-03-16").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void listByDateCommand_noMatchingDate_executesWithoutError() {
+        boolean isExit = Parser.parse("list d/2099-01-01").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void listByDateCommand_missingDate_throwsException() {
+        assertThrows(BitbitesException.class, () -> Parser.parse("list d/").execute(foodList, ui));
+    }
+    //@@author
 
     @Test
     public void sampleExit() {

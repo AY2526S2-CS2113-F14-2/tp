@@ -1,6 +1,7 @@
 package command;
 
 import java.util.logging.Logger;
+
 import model.FoodList;
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
@@ -22,8 +23,7 @@ public class ListByDateCommand extends Command {
             throw new BitbitesException("OOPS!!! Missing date. Please provide a valid date.");
         }
 
-        assert words[0].equals("list") : "List command should be 'list d/DATE'";
-        assert !words[1].isEmpty() : "Date should not be empty";
+        assert words[0].trim().equals("list") : "List command should be 'list d/DATE'";
 
         String date = words[1].trim();
         System.out.println(BitbitesResponses.listFromDateMessage + date + ":");
