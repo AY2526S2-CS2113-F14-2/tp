@@ -34,11 +34,10 @@ import ui.UserInterface;
 
 class BitbitesTest {
 
+    @TempDir
+    private Path tempDir;
     private FoodList foodList;
     private UserInterface ui;
-
-    @TempDir
-    Path tempDir;
     private String tempFilePath;
     private Storage storage;
 
@@ -236,13 +235,13 @@ class BitbitesTest {
 
     // ── Storage ───────────────────────────────────────────
     @Test
-    void storage_load_nonExistentFile_returnsEmptyList() throws FileNotFoundException {
+    void storage_load_missingFile() throws FileNotFoundException {
         ArrayList<Food> loadedFoods = storage.load();
         assertTrue(loadedFoods.isEmpty());
     }
 
     @Test
-    void storage_load_validFile_loadsCorrectly() throws IOException {
+    void storage_load_validFile() throws IOException {
         FileWriter fw = new FileWriter(tempFilePath);
         fw.write("Burger | 443 | 27.2 | 31-03-2026\n");
         fw.write("Chicken Rice | 620 | 25.9 | 31-03-2026\n");
@@ -257,7 +256,7 @@ class BitbitesTest {
     }
 
     @Test
-    void storage_load_corruptedFile_throwsException() throws IOException {
+    void storage_load_corruptedFile() throws IOException {
         FileWriter fw = new FileWriter(tempFilePath);
         fw.write("Pizza | abc | 15.0 | 01-04-2026\n");
         fw.close();
@@ -268,7 +267,7 @@ class BitbitesTest {
     }
 
     @Test
-    void storage_save_validFoodList_savesCorrectly() throws FileNotFoundException {
+    void storage_save_validList() throws FileNotFoundException {
         FoodList listToSave = new FoodList();
         listToSave.addFood(new Food("Salad", 30, 7.1, "01-04-2026"));
 
