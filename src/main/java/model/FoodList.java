@@ -39,6 +39,14 @@ public class FoodList {
         return this.foodList;
     }
 
+    public Food getFood(int index) {
+        if (index < 0 || index >= foodList.size()) {
+            throw new BitbitesException(BitbitesResponses.deleteErrorMessage);
+        }
+        assert index >= 0 && index < foodList.size() : "Index out of bounds: " + index;
+        return foodList.get(index);
+    }
+
     public int size() {
         return foodList.size();
     }
