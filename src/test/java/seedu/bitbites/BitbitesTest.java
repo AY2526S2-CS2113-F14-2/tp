@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import command.AddCommand;
 import command.Command;
 import command.DeleteCommand;
 import command.HelpCommand;
 import command.ListByDateCommand;
+import command.EditCommand;
 import model.Food;
 import model.FoodList;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,6 +103,71 @@ class BitbitesTest {
         );
     }
 
+    // ── EditCommand ───────────────────────────────────────
+    @Test
+    void parser_edit_returnsCorrectCommand() {
+        Command command = Parser.parse("edit 1 n/New Name");
+        assertInstanceOf(EditCommand.class, command);
+    }
+
+    @Test
+    void editCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse("edit 1 n/New Name").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void editCommand_changeName_correct() {
+        Parser.parse("edit 1 n/Duck Rice").execute(foodList, ui);
+        assertEquals("Duck Rice", foodList.get(0).getName());
+    }
+
+    @Test
+    void editCommand_changeCalories_correct() {
+        Parser.parse("edit 1 c/999").execute(foodList, ui);
+        assertEquals(999, foodList.get(0).getCalories());
+    }
+
+    @Test
+    void editCommand_changeProtein_correct() {
+        Parser.parse("edit 1 p/99.9").execute(foodList, ui);
+        assertEquals(99.9, foodList.get(0).getProtein());
+    }
+
+    @Test
+    void editCommand_changeDate_correct() {
+        Parser.parse("edit 1 d/2026-01-01").execute(foodList, ui);
+        assertEquals("2026-01-01", foodList.get(0).getDate());
+    }
+
+    @Test
+    void editCommand_changeMultipleFields_correct() {
+        Parser.parse("edit 1 n/Duck Rice c/999 p/50.0").execute(foodList, ui);
+        assertEquals("Duck Rice", foodList.get(0).getName());
+        assertEquals(999, foodList.get(0).getCalories());
+        assertEquals(50.0, foodList.get(0).getProtein());
+    }
+
+    @Test
+    void editCommand_indexOutOfRange_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("edit 99 n/Duck Rice").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void editCommand_missingIndex_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("edit").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void editCommand_noFieldsProvided_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("edit 1").execute(foodList, ui)
+        );
+    }
 
     @Test
     public void listTest() {

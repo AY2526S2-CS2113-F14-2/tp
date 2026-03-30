@@ -38,6 +38,10 @@ public class BitbitesResponses {
     public static String listFromDateMessage = "Here are the food items from ";
     // Delete Message
     public static String deleteMessage = "Got it. I've removed the food item!";
+    // Edit Message
+    public static String editMessage = "Got it. I've updated the food item!";
+    public static String editFormatReminder = "Please use: edit INDEX [n/NAME] "
+            + "[c/CALORIES] [p/PROTEIN] [d/DATE]";
     // Exit Message
     public static String exitMessage = "Bye. Hope to see you again soon!";
     // Help Message
@@ -49,6 +53,8 @@ public class BitbitesResponses {
             + "  goals                                   - View daily and weekly goal progress\n"
             + "  goals set dc/CAL dp/PROT wc/CAL wp/PROT - Set daily/weekly calorie and protein goals\n"
             + "  help                                    - Show help message\n"
+            + "  edit INDEX                              - Edit an existing food item\n"
+            + "  (Optional: [n/NAME] [c/CALORIES] [p/PROTEIN] [d/DATE])\n"
             + "  exit                                    - Exit the application\n"
             + "  (Date format: DD-MM-YYYY)";
 }

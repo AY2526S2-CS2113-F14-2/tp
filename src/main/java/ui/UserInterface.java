@@ -50,6 +50,13 @@ public class UserInterface {
         System.out.println(message);
     }
 
+    /* Show the edit message to the user. */
+    public void showEditedFood(Food food) {
+        assert food != null : "Food should not be null";
+        System.out.println(BitbitesResponses.editMessage);
+        System.out.println("  " + food);
+    }
+
     /* Show the exit message to the user. */
     public void showExit() {
         System.out.println(bitbitesResponses.exitMessage);

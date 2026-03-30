@@ -11,6 +11,7 @@ import command.HelpCommand;
 import command.AddCommand;
 import command.ListCommand;
 import command.ListByDateCommand;
+import command.EditCommand;
 import command.ExitCommand;
 import command.GoalsCommand;
 
@@ -39,6 +40,8 @@ public class Parser {
             return new GoalsCommand(fullCommand);
         } else if (fullCommand.startsWith("delete")) {
             return new DeleteCommand(fullCommand);
+        } else if (fullCommand.startsWith("edit")) {
+            return new EditCommand(fullCommand);
         } else if (fullCommand.equals("exit")) {
             logger.log(Level.INFO, "Attempting to exit");
             return new ExitCommand();
