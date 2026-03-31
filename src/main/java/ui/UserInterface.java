@@ -170,6 +170,9 @@ public class UserInterface {
         }
     }
 
+	public void showTips() {
+		System.out.println(BitbitesResponses.tipsMessage);
+	}
 
     /* Show the exit message to the user. */
     public void showExit() {

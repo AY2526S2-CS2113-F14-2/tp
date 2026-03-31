@@ -9,6 +9,7 @@ import command.HistoryTopCommand;
 import command.SummaryByDateCommand;
 import command.SummaryCompareCommand;
 import command.SummaryRangeCommand;
+import command.TipsCommand;
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
 
@@ -63,6 +64,8 @@ public class Parser {
             return new HistoryStreakCommand();
         } else if (fullCommand.equals("history")) {
             return new HistoryCommand();
+        } else if (fullCommand.equals("tips")) {
+            return new TipsCommand();
         } else if (fullCommand.equals("exit")) {
             logger.log(Level.INFO, "Attempting to exit");
             return new ExitCommand();
