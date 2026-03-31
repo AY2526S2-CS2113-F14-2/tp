@@ -22,6 +22,7 @@ import command.ListByDateCommand;
 import command.EditCommand;
 import command.ExitCommand;
 import command.GoalsCommand;
+import command.PresetCommand;
 
 public class Parser {
 
@@ -35,10 +36,8 @@ public class Parser {
         assert !fullCommand.isEmpty() : "Command should not be empty";
 
         if (fullCommand.startsWith("list d/")) {
-            logger.log(Level.INFO, "Attempting to list food items from date");
             return new ListByDateCommand(fullCommand);
         } else if (fullCommand.equals("list")) {
-            logger.log(Level.INFO, "Attempting to list all food items");
             return new ListCommand();
         } else if (fullCommand.startsWith("add ")) {
             return new AddCommand(fullCommand);
@@ -50,6 +49,8 @@ public class Parser {
             return new DeleteCommand(fullCommand);
         } else if (fullCommand.startsWith("edit")) {
             return new EditCommand(fullCommand);
+        } else if (fullCommand.startsWith("preset")) {
+            return new PresetCommand(fullCommand);
         } else if (fullCommand.startsWith("summary from/")) {
             return new SummaryRangeCommand(fullCommand);
         } else if (fullCommand.startsWith("summary compare")) {

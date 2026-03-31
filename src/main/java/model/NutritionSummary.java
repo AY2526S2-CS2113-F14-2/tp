@@ -98,7 +98,7 @@ public class NutritionSummary {
                     food.getProtein(), proteinPercent));
         }
 
-        // Segmented bar — full width since this is for one day
+        // Segmented bar
         String bar = ProgressBar.generateSegmented(items, totalCalories);
         sb.append("\n  ").append(bar).append("\n");
 

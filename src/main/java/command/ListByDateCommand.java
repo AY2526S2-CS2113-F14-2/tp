@@ -1,11 +1,13 @@
 package command;
 
 import java.util.logging.Logger;
+
 import model.FoodList;
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
 import ui.UserInterface;
 
+//@@author j-kennethh
 public class ListByDateCommand extends Command {
     private static final Logger logger = Logger.getLogger(ListByDateCommand.class.getName());
     private final String fullCommand;
@@ -21,8 +23,8 @@ public class ListByDateCommand extends Command {
             throw new BitbitesException("OOPS!!! Missing date. Please provide a valid date.");
         }
 
-        assert words[0].equals("list") : "List command should be 'list d/DATE'";
-        assert !words[1].isEmpty() : "Date should not be empty";
+        assert words[0].trim().equals("list") : "List command should be 'list d/DATE'";
+        assert !words[1].isEmpty() : "Date should not be empty.";
 
         String date = words[1].trim();
         System.out.println(BitbitesResponses.listFromDateMessage + date + ":");
@@ -34,6 +36,8 @@ public class ListByDateCommand extends Command {
                 count++;
             }
         }
+
         return false;
     }
 }
+//@@author

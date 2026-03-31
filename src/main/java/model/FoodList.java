@@ -13,6 +13,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
 
@@ -24,8 +25,14 @@ public class FoodList {
     private java.util.ArrayList<Food> foodList;
 
     public FoodList() {
-        this.foodList = new java.util.ArrayList<Food>();
+        this.foodList = new ArrayList<>();
     }
+
+    //@@author j-kennethh
+    public FoodList(ArrayList<Food> loadedFoods) {
+        this.foodList = loadedFoods;
+    }
+    //@@author
 
     public void addFood(Food food) {
         this.foodList.add(food);
@@ -46,9 +53,11 @@ public class FoodList {
         if (index < 0 || index >= foodList.size()) {
             throw new BitbitesException(BitbitesResponses.deleteErrorMessage);
         }
+        assert index >= 0 && index < foodList.size() : "Index out of bounds: " + index;
         return foodList.get(index);
     }
 
+    //@@author j-kennethh
     public int size() {
         return foodList.size();
     }
@@ -56,6 +65,7 @@ public class FoodList {
     public Food get(int i) {
         return foodList.get(i);
     }
+    //@@author
 
 
     // ── Summary ───────────────────────────────────────────
@@ -68,37 +78,6 @@ public class FoodList {
             }
         }
         return result;
-    }
-
-    public List<Food> getItemsInRange(String fromDate, String toDate) {
-        assert fromDate != null && !fromDate.isEmpty() : "From date should not be null or empty";
-        assert toDate != null && !toDate.isEmpty() : "To date should not be null or empty";
-        List<Food> result = new ArrayList<>();
-        for (Food food : foodList) {
-            String date = food.getDate();
-            if (date.compareTo(fromDate) >= 0 && date.compareTo(toDate) <= 0) {
-                result.add(food);
-            }
-        }
-        return result;
-    }
-
-    public int getTotalCalories() {
-        int total = 0;
-        for (Food food : foodList) {
-            total += food.getCalories();
-        }
-        assert total >= 0 : "Total calories should not be negative";
-        return total;
-    }
-
-    public double getTotalProtein() {
-        double total = 0;
-        for (Food food : foodList) {
-            total += food.getProtein();
-        }
-        assert total >= 0 : "Total protein should not be negative";
-        return total;
     }
 
     public int getTotalCaloriesByDate(String date) {
@@ -143,12 +122,17 @@ public class FoodList {
                 dates.add(food.getDate());
             }
         }
-        java.util.Collections.sort(dates);
+        java.time.format.DateTimeFormatter formatter =
+                java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        dates.sort((a, b) -> {
+            java.time.LocalDate d1 = java.time.LocalDate.parse(a, formatter);
+            java.time.LocalDate d2 = java.time.LocalDate.parse(b, formatter);
+            return d1.compareTo(d2);
+        });
         return dates;
     }
 
     public NutritionSummary getSummaryByDate(String date) {
-        assert date != null && !date.isEmpty() : "Date should not be null or empty";
         List<Food> items = getItemsByDate(date);
         int totalCalories = getTotalCaloriesByDate(date);
         double totalProtein = getTotalProteinByDate(date);
@@ -164,12 +148,15 @@ public class FoodList {
     }
 
     public List<NutritionSummary> getSummariesInRange(String fromDate, String toDate) {
-        assert fromDate != null && !fromDate.isEmpty() : "From date should not be null or empty";
-        assert toDate != null && !toDate.isEmpty() : "To date should not be null or empty";
-        assert fromDate.compareTo(toDate) <= 0 : "From date should not be after to date";
+        java.time.format.DateTimeFormatter formatter =
+                java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        java.time.LocalDate from = java.time.LocalDate.parse(fromDate, formatter);
+        java.time.LocalDate to = java.time.LocalDate.parse(toDate, formatter);
+
         List<NutritionSummary> summaries = new ArrayList<>();
         for (String date : getUniqueDates()) {
-            if (date.compareTo(fromDate) >= 0 && date.compareTo(toDate) <= 0) {
+            java.time.LocalDate d = java.time.LocalDate.parse(date, formatter);
+            if (!d.isBefore(from) && !d.isAfter(to)) {
                 summaries.add(getSummaryByDate(date));
             }
         }
@@ -226,8 +213,10 @@ public class FoodList {
     private boolean isConsecutive(String date1, String date2) {
         assert date1 != null && date2 != null : "Dates should not be null";
         try {
-            java.time.LocalDate d1 = java.time.LocalDate.parse(date1);
-            java.time.LocalDate d2 = java.time.LocalDate.parse(date2);
+            java.time.format.DateTimeFormatter formatter =
+                    java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            java.time.LocalDate d1 = java.time.LocalDate.parse(date1, formatter);
+            java.time.LocalDate d2 = java.time.LocalDate.parse(date2, formatter);
             return d1.plusDays(1).equals(d2);
         } catch (Exception e) {
             return false;

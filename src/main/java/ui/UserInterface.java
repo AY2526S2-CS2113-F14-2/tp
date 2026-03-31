@@ -1,9 +1,9 @@
 /**
  * UserInterface.java
- * 
+ * <p>
  * This file handles all user input/output operations for the chatbot.
  * Displays messages to the user and reads commands from standard input.
- * 
+ * <p>
  * Dependencies:
  * - java.util.Scanner: For reading user input from console
  * - BitbitesResponses: For accessing predefined response messages
@@ -12,9 +12,9 @@ package ui;
 
 import java.util.List;
 import java.util.Scanner;
+import model.Food;
 import model.NutritionSummary;
 import seedu.bitbites.BitbitesResponses;
-import model.Food;
 
 /**
  * UserInterface manages all interactions between the chatbot and the user.
@@ -24,19 +24,22 @@ public class UserInterface {
     /* The responses used by the chatbot. */
     static BitbitesResponses bitbitesResponses = new BitbitesResponses();
 
-    /** The scanner used to read user input from the console. */
+    /**
+     * The scanner used to read user input from the console.
+     */
     private final Scanner scanner;
+
     public UserInterface() {
         this.scanner = new Scanner(System.in);
     }
 
-    //// READ section ////
+    /// / READ section ////
     /* Reads a command from the user input. */
     public String readCommand() {
         return this.scanner.nextLine();
     }
 
-    //// SHOW section ////
+    /// / SHOW section ////
     /* Displays the welcome message and prompts the user for their name. */
     public void showWelcome() {
         System.out.println(bitbitesResponses.welcomeMessage);
@@ -126,7 +129,7 @@ public class UserInterface {
             System.out.printf("  %-12s  %-12s  %-10s  %d%n",
                     s.getDate(),
                     s.getTotalCalories() + " kcal",
-                    s.getTotalProtein() + "g",
+                    String.format("%.1fg", s.getTotalProtein()),
                     s.getItemCount());
         }
     }
@@ -170,9 +173,9 @@ public class UserInterface {
         }
     }
 
-	public void showTips() {
-		System.out.println(BitbitesResponses.tipsMessage);
-	}
+    public void showTips() {
+        System.out.println(BitbitesResponses.tipsMessage);
+    }
 
     /* Show the exit message to the user. */
     public void showExit() {

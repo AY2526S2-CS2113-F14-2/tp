@@ -5,9 +5,9 @@ import ui.UserInterface;
 
 public class TipsCommand extends Command {
 
-	@Override
-	public boolean execute(FoodList foodList, UserInterface ui) {
-		ui.showTips();
-		return false;
-	}
+    @Override
+    public boolean execute(FoodList foodList, UserInterface ui) {
+        ui.showTips();
+        return false;
+    }
 }
