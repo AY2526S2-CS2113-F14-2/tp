@@ -11,7 +11,6 @@ import command.SummaryCompareCommand;
 import command.SummaryRangeCommand;
 import command.TipsCommand;
 import command.ProfileCommand;
-import model.Profile;
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
 

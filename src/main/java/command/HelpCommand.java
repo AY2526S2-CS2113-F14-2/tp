@@ -2,7 +2,6 @@ package command;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.FoodList;
 import seedu.bitbites.AppContext;
 import ui.UserInterface;
 
