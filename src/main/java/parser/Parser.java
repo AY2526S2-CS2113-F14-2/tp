@@ -10,6 +10,8 @@ import command.SummaryByDateCommand;
 import command.SummaryCompareCommand;
 import command.SummaryRangeCommand;
 import command.TipsCommand;
+import command.ProfileCommand;
+import model.Profile;
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
 
@@ -67,6 +69,9 @@ public class Parser {
             return new HistoryCommand();
         } else if (fullCommand.equals("tips")) {
             return new TipsCommand();
+        } else if (fullCommand.equals("profile") || fullCommand.startsWith("profile set")
+                || fullCommand .equals("profile clear")) {
+            return new ProfileCommand(fullCommand);
         } else if (fullCommand.equals("exit")) {
             logger.log(Level.INFO, "Attempting to exit");
             return new ExitCommand();
