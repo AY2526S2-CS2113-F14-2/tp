@@ -1,14 +1,16 @@
 /**
  * FoodList.java
- * 
+ * <p>
  * This file defines the FoodList container class that manages a collection of Food items.
  * Provides methods to add and retrieve food items.
- * 
+ * <p>
  * Dependencies:
  * - Food: Data model for individual food items
  * - java.util.ArrayList: For storing food items
  */
 package model;
+
+import java.util.ArrayList;
 
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
@@ -21,8 +23,14 @@ public class FoodList {
     private java.util.ArrayList<Food> foodList;
 
     public FoodList() {
-        this.foodList = new java.util.ArrayList<Food>();
+        this.foodList = new ArrayList<>();
     }
+
+    //@@author j-kennethh
+    public FoodList(ArrayList<Food> loadedFoods) {
+        this.foodList = loadedFoods;
+    }
+    //@@author
 
     public void addFood(Food food) {
         this.foodList.add(food);
@@ -47,6 +55,7 @@ public class FoodList {
         return foodList.get(index);
     }
 
+    //@@author j-kennethh
     public int size() {
         return foodList.size();
     }
@@ -54,4 +63,5 @@ public class FoodList {
     public Food get(int i) {
         return foodList.get(i);
     }
+    //@@author
 }

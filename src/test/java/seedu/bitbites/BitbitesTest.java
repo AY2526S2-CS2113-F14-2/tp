@@ -13,17 +13,33 @@ import command.DeleteCommand;
 import command.HelpCommand;
 import command.ListByDateCommand;
 import command.EditCommand;
+import command.ListCommand;
+
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
 import model.Food;
 import model.FoodList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import parser.Parser;
+import storage.Storage;
 import ui.UserInterface;
 
 class BitbitesTest {
 
+    @TempDir
+    private Path tempDir;
     private FoodList foodList;
     private UserInterface ui;
+    private String tempFilePath;
+    private Storage storage;
 
     @BeforeEach
     void setUp() {
@@ -31,17 +47,14 @@ class BitbitesTest {
         ui = new UserInterface();
         foodList.addFood(new Food("Burger", 450, 30, "2026-03-16"));
         foodList.addFood(new Food("Salad", 200, 10, "2026-03-17"));
+
+        tempFilePath = tempDir.resolve("test_data.text").toString();
+        storage = new Storage(tempFilePath);
     }
 
     @Test
     public void sampleTest() {
         assertTrue(true);
-    }
-
-    @Test
-    void parser_listByDate_returnsCorrectCommand() {
-        Command command = Parser.parse("list d/2025-03-14");
-        assertInstanceOf(ListByDateCommand.class, command);
     }
 
     @Test
@@ -169,10 +182,107 @@ class BitbitesTest {
         );
     }
 
+    //@@author j-kennethh
+    // ── ListCommand ───────────────────────────────────────
     @Test
-    public void listTest() {
-        assertTrue(true);
+    void parser_list_returnsCorrectCommand() {
+        Command command = Parser.parse("list");
+        assertInstanceOf(ListCommand.class, command);
     }
+
+    @Test
+    void listCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse("list").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void listCommand_emptyList_executesWithoutError() {
+        FoodList emptyList = new FoodList();
+        boolean isExit = Parser.parse("list").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    // ── ListByDate Command ───────────────────────────────────────
+    @Test
+    void parser_listByDate_returnsCorrectCommand() {
+        Command command = Parser.parse("list d/2026-03-14");
+        assertInstanceOf(ListByDateCommand.class, command);
+    }
+
+    @Test
+    void listByDateCommand_invalidPrefix_throwsAssertError() {
+        ListByDateCommand badCommand = new ListByDateCommand("show d/2026-03-16");
+        assertThrows(AssertionError.class, () -> badCommand.execute(foodList, ui));
+    }
+
+    @Test
+    void listByDateCommand_executeWithMatchingDate_returnsFalse() {
+        boolean isExit = Parser.parse("list d/2026-03-16").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void listByDateCommand_noMatchingDate_executesWithoutError() {
+        boolean isExit = Parser.parse("list d/2099-01-01").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void listByDateCommand_missingDate_throwsException() {
+        assertThrows(BitbitesException.class, () -> Parser.parse("list d/").execute(foodList, ui));
+    }
+
+    // ── Storage ───────────────────────────────────────────
+    @Test
+    void storage_load_missingFile() throws FileNotFoundException {
+        ArrayList<Food> loadedFoods = storage.load();
+        assertTrue(loadedFoods.isEmpty());
+    }
+
+    @Test
+    void storage_load_validFile() throws IOException {
+        FileWriter fw = new FileWriter(tempFilePath);
+        fw.write("Burger | 443 | 27.2 | 31-03-2026\n");
+        fw.write("Chicken Rice | 620 | 25.9 | 31-03-2026\n");
+        fw.close();
+
+        ArrayList<Food> loadedFoods = storage.load();
+        assertEquals(2, loadedFoods.size());
+        assertEquals("Burger", loadedFoods.get(0).getName());
+        assertEquals(443, loadedFoods.get(0).getCalories());
+        assertEquals(27.2, loadedFoods.get(0).getProtein());
+        assertEquals("31-03-2026", loadedFoods.get(0).getDate());
+    }
+
+    @Test
+    void storage_load_corruptedFile() throws IOException {
+        FileWriter fw = new FileWriter(tempFilePath);
+        fw.write("Pizza | abc | 15.0 | 01-04-2026\n");
+        fw.close();
+
+        assertThrows(BitbitesException.class, () -> {
+            storage.load();
+        });
+    }
+
+    @Test
+    void storage_save_validList() throws FileNotFoundException {
+        FoodList listToSave = new FoodList();
+        listToSave.addFood(new Food("Salad", 30, 7.1, "01-04-2026"));
+
+        storage.save(listToSave);
+
+        Storage verifyStorage = new Storage(tempFilePath);
+        ArrayList<Food> loadedFoods = verifyStorage.load();
+
+        assertEquals(1, loadedFoods.size());
+        assertEquals("Salad", loadedFoods.get(0).getName());
+        assertEquals(30, loadedFoods.get(0).getCalories());
+        assertEquals(7.1, loadedFoods.get(0).getProtein());
+        assertEquals("01-04-2026", loadedFoods.get(0).getDate());
+    }
+    //@@author
 
     @Test
     public void sampleExit() {
