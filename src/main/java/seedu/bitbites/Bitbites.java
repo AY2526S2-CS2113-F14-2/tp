@@ -59,6 +59,7 @@ public class Bitbites {
      * user commands until the user issues the exit command. It also automatically
      * saves data to the disk after every successful command execution.
      */
+    //@@author rayminQAQ
     public void run() {
         ui.showWelcome();
         GoalsCommand.loadGoalsIfNeeded(ui.getCurrentUser());
@@ -78,6 +79,7 @@ public class Bitbites {
             }
         }
     }
+    //@@author
 
     //@@author j-kennethh
     /**
