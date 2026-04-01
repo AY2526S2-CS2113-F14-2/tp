@@ -7,18 +7,23 @@ import ui.UserInterface;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import seedu.bitbites.AppContext;
+import storage.GoalsStorage;
 
 /**
  * GoalsCommand.java
  *
  * Handles the setting and viewing of daily and weekly nutritional goals.
  * Users can set calorie and protein targets, and view their current progress
- * against those goals. Also provides a static method for other commands
- * to display a quick daily progress summary after adding or deleting food.
+ * against those goals. Goals are persisted to disk per user and loaded
+ * at the start of each session.
+ *
+ * Also provides static methods for other commands to display a quick daily
+ * progress summary after adding or deleting food, and to auto-set goals
+ * from the user's BMR when a profile is saved.
  *
  * Supported commands:
- *   goals: View daily and weekly progress
- *   goals set dc/CAL dp/PROT wc/CAL wp/PROT: Set goals
+ *   goals                                             - View daily and weekly progress
+ *   goals set dc/CAL dp/PROT wc/CAL wp/PROT          - Set goals
  */
 // @@author bryanyeo3125
 public class GoalsCommand extends Command {
@@ -27,6 +32,7 @@ public class GoalsCommand extends Command {
     private static double dailyProteinGoal = 50.0;
     private static int weeklyCalorieGoal = 14000;
     private static double weeklyProteinGoal = 350.0;
+    private static String currentUser = "";
 
     private final String fullCommand;
 
@@ -41,6 +47,7 @@ public class GoalsCommand extends Command {
 
     /**
      * Executes the goals command, either displaying progress or updating goal values.
+     * Loads persisted goals from disk on execution if not already loaded.
      *
      * @param context The application context containing FoodList and UserInterface.
      * @return false always, as this command does not trigger application exit.
@@ -50,6 +57,8 @@ public class GoalsCommand extends Command {
         FoodList foodList = context.getFoodList();
         UserInterface ui = context.getUi();
         PresetList presetList = context.getPresetList();
+        currentUser = ui.getCurrentUser();
+        loadGoalsIfNeeded(currentUser);
 
         if (fullCommand.equals("goals")) {
             showGoalsMenu(foodList);
@@ -74,6 +83,40 @@ public class GoalsCommand extends Command {
             System.out.println("  goals set wc/CAL wp/PROT       - Set weekly goals");
         }
         return false;
+    }
+
+    /**
+     * Loads goals from disk for the given user if a saved file exists.
+     * Does nothing if no goals file is found, keeping the default values.
+     *
+     * @param name The name of the current user session.
+     */
+    private static void loadGoalsIfNeeded(String name) {
+        double[] goals = GoalsStorage.loadGoals(name);
+        if (goals != null) {
+            dailyCalorieGoal = (int) goals[0];
+            dailyProteinGoal = goals[1];
+            weeklyCalorieGoal = (int) goals[2];
+            weeklyProteinGoal = goals[3];
+        }
+    }
+
+    /**
+     * Auto-sets the daily and weekly calorie goals based on the user's BMR.
+     * Called automatically after a profile is saved via ProfileCommand.
+     * Saves the updated goals to disk.
+     *
+     * @param name The name of the current user session.
+     * @param bmr  The user's calculated BMR in kcal/day.
+     */
+    public static void autoSetGoalsFromBmr(String name, int bmr) {
+        dailyCalorieGoal = bmr;
+        weeklyCalorieGoal = bmr * 7;
+        currentUser = name;
+        GoalsStorage.saveGoals(name, dailyCalorieGoal, dailyProteinGoal,
+                weeklyCalorieGoal, weeklyProteinGoal);
+        System.out.println("Daily calorie goal auto-set to your BMR: " + bmr + " kcal.");
+        System.out.println("Weekly calorie goal auto-set to: " + (bmr * 7) + " kcal.");
     }
 
     /**
@@ -142,6 +185,7 @@ public class GoalsCommand extends Command {
      * Parses and updates one or more goal values from the command string.
      * Supports setting daily calories (dc/), daily protein (dp/),
      * weekly calories (wc/), and weekly protein (wp/).
+     * Saves updated goals to disk after successful update.
      *
      * @param fullCommand The full command string containing goal prefixes and values.
      */
@@ -184,6 +228,8 @@ public class GoalsCommand extends Command {
                 weeklyProteinGoal = val;
                 System.out.println("Weekly protein goal set to " + val + "g.");
             }
+            GoalsStorage.saveGoals(currentUser, dailyCalorieGoal, dailyProteinGoal,
+                    weeklyCalorieGoal, weeklyProteinGoal);
         } catch (NumberFormatException e) {
             System.out.println("Invalid value. Goals must be non-negative numbers.");
         }

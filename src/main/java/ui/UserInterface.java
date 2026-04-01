@@ -52,7 +52,7 @@ public class UserInterface {
             System.out.println("Welcome back " + name + "!");
         } else {
             System.out.println("Hello " + name + "! Set up your profile with:");
-            System.out.println("  profile set n/" + name + " a/AGE w/WEIGHT h/HEIGHT");
+            System.out.println("  profile set n/" + name + "g/GENDER a/AGE w/WEIGHT h/HEIGHT");
         }
         System.out.println("Type 'help' for a list of available commands.");
     }

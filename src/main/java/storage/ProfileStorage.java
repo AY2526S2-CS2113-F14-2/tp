@@ -38,6 +38,7 @@ public class ProfileStorage {
             file.getParentFile().mkdirs();
             FileWriter writer = new FileWriter(file);
             writer.write("name=" + profile.getName() + "\n");
+            writer.write("gender=" + profile.getGender() + "\n");
             writer.write("age=" + profile.getAge() + "\n");
             writer.write("weight=" + profile.getWeight() + "\n");
             writer.write("height=" + profile.getHeight() + "\n");
@@ -63,11 +64,12 @@ public class ProfileStorage {
             }
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String profileName = reader.readLine().split("=")[1];
+            String gender = reader.readLine().split("=")[1];
             int age = Integer.parseInt(reader.readLine().split("=")[1]);
             double weight = Double.parseDouble(reader.readLine().split("=")[1]);
             double height = Double.parseDouble(reader.readLine().split("=")[1]);
             reader.close();
-            return new Profile(profileName, age, weight, height);
+            return new Profile(profileName, gender, age, weight, height);
         } catch (IOException | NumberFormatException e) {
             return null;
         }

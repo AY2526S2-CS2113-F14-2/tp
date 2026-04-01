@@ -12,6 +12,7 @@ package model;
 // @@author bryanyeo3125
 public class Profile {
     private String name;
+    private String gender;
     private int age;
     private double weight;
     private double height;
@@ -20,12 +21,14 @@ public class Profile {
      * Constructs a Profile with the given personal attributes.
      *
      * @param name   The user's name.
+     * @param gender The user's gender.
      * @param age    The user's age in years.
      * @param weight The user's weight in kilograms.
      * @param height The user's height in centimetres.
      */
-    public Profile(String name, int age, double weight, double height) {
+    public Profile(String name, String gender, int age, double weight, double height) {
         this.name = name;
+        this.gender = gender;
         this.age = age;
         this.weight = weight;
         this.height = height;
@@ -47,6 +50,24 @@ public class Profile {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Returns the user's gender.
+     *
+     * @return The gender string.
+     */
+    public String getGender() {
+        return gender;
+    }
+
+    /**
+     * Sets the user's gender.
+     *
+     * @param gender The user's gender.
+     */
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     /**
@@ -136,24 +157,28 @@ public class Profile {
 
     /**
      * Calculates and returns the user's Basal Metabolic Rate (BMR)
-     * using the Mifflin-St Jeor formula (male).
-     * BMR = (10 * weight) + (6.25 * height) - (5 * age) + 5
+     * using the Mifflin-St Jeor formula, adjusted for gender.
+     * Male:   BMR = (10 * weight) + (6.25 * height) - (5 * age) + 5
+     * Female: BMR = (10 * weight) + (6.25 * height) - (5 * age) - 161
      *
      * @return The BMR in kcal/day as an integer.
      */
     public int getBmr() {
+        if (gender != null && gender.equalsIgnoreCase("female")) {
+            return (int) ((10 * weight) + (6.25 * height) - (5 * age) - 161);
+        }
         return (int) ((10 * weight) + (6.25 * height) - (5 * age) + 5);
     }
 
     /**
      * Returns a string representation of the profile.
      *
-     * @return A formatted string showing name, age, weight and height.
+     * @return A formatted string showing name, gender, age, weight and height.
      */
     @Override
     public String toString() {
-        return String.format("Name: %s | Age: %d | Weight: %.1fkg | Height: %.1fcm",
-                name, age, weight, height);
+        return String.format("Name: %s | Gender: %s | Age: %d | Weight: %.1fkg | Height: %.1fcm",
+                name, gender, age, weight, height);
     }
 }
 // @@author
