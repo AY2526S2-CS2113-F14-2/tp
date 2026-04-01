@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import model.Food;
 import model.FoodList;
 import model.PresetList;
+import command.PresetCommand;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -285,6 +286,174 @@ class BitbitesTest {
         assertEquals(30, loadedFoods.get(0).getCalories());
         assertEquals(7.1, loadedFoods.get(0).getProtein());
         assertEquals("01-04-2026", loadedFoods.get(0).getDate());
+    }
+
+    // ── PresetCommand ─────────────────────────────────────────
+    @Test
+    void parser_preset_returnsCommand() {
+        Command command = Parser.parse("preset list");
+        assertInstanceOf(PresetCommand.class, command);
+    }
+
+    @Test
+    void preset_missingAction_throws() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset").execute(context)
+        );
+    }
+
+    @Test
+    void preset_unknownAction_throws() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset jump").execute(context)
+        );
+    }
+
+    // -- Add Preset Tests --
+    @Test
+    void preset_add_valid() {
+        Parser.parse("preset add n/Oats c/150 p/5.0").execute(context);
+        assertEquals(1, presetList.size());
+        assertEquals("Oats", presetList.getPreset(0).getName());
+        assertEquals("PRESET", presetList.getPreset(0).getDate());
+    }
+
+    @Test
+    void preset_add_missingPrefix() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset add n/Oats c/150").execute(context)
+        );
+    }
+
+    @Test
+    void preset_add_invalidValues() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset add n/Oats c/-50 p/5.0").execute(context)
+        );
+
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset add n/ c/150 p/5.0").execute(context)
+        );
+    }
+
+    @Test
+    void preset_add_missingN() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset add c/150 p/5.0").execute(context)
+        );
+    }
+
+    @Test
+    void preset_add_missingC() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset add n/Oats p/5.0").execute(context)
+        );
+    }
+
+    @Test
+    void preset_add_negProtein() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset add n/Oats c/150 p/-5.0").execute(context)
+        );
+    }
+
+    @Test
+    void preset_add_nonNumeric() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset add n/Oats c/abc p/5.0").execute(context)
+        );
+    }
+
+    // -- List Preset Tests --
+    @Test
+    void preset_list_empty() {
+        boolean isExit = Parser.parse("preset list").execute(context);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void preset_list_populated() {
+        presetList.addPreset(new Food("Oats", 150, 5.0, "PRESET"));
+        boolean isExit = Parser.parse("preset list").execute(context);
+        assertFalse(isExit);
+    }
+
+    // -- Delete Preset Tests --
+    @Test
+    void preset_delete_valid() {
+        presetList.addPreset(new Food("Oats", 150, 5.0, "PRESET"));
+        Parser.parse("preset delete 1").execute(context);
+        assertEquals(0, presetList.size());
+    }
+
+    @Test
+    void preset_delete_nonNumeric() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset delete abc").execute(context)
+        );
+    }
+
+    // -- Use Preset Tests --
+    @Test
+    void preset_use_emptyList() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset use 1").execute(context)
+        );
+    }
+
+    @Test
+    void preset_use_validToday() {
+        presetList.addPreset(new Food("Oats", 150, 5.0, "PRESET"));
+        int sizeBefore = foodList.size();
+
+        Parser.parse("preset use 1").execute(context);
+
+        assertEquals(sizeBefore + 1, foodList.size());
+        assertEquals("Oats", foodList.get(foodList.size() - 1).getName());
+    }
+
+    @Test
+    void preset_use_customDate() {
+        presetList.addPreset(new Food("Oats", 150, 5.0, "PRESET"));
+        int sizeBefore = foodList.size();
+
+        Parser.parse("preset use 1 d/15-05-2026").execute(context);
+
+        assertEquals(sizeBefore + 1, foodList.size());
+        assertEquals("15-05-2026", foodList.get(foodList.size() - 1).getDate());
+    }
+
+    @Test
+    void preset_use_invalidDate() {
+        presetList.addPreset(new Food("Oats", 150, 5.0, "PRESET"));
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset use 1 d/2026/05/15").execute(context)
+        );
+    }
+
+    @Test
+    void preset_use_nonNumeric() {
+        presetList.addPreset(new Food("Oats", 150, 5.0, "PRESET"));
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("preset use abc").execute(context)
+        );
+    }
+
+    @Test
+    void preset_use_extraText() {
+        presetList.addPreset(new Food("Oats", 150, 5.0, "PRESET"));
+        int sizeBefore = foodList.size();
+
+        Parser.parse("preset use 1 hello").execute(context);
+        assertEquals(sizeBefore + 1, foodList.size());
+    }
+
+    // -- Architecture Test --
+    @Test
+    void preset_oldExecute_returnsFalse() {
+        PresetCommand cmd = new PresetCommand("preset list");
+        boolean isExit = cmd.execute(context);
+        assertFalse(isExit);
     }
     //@@author
 
