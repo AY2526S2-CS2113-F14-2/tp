@@ -4,17 +4,39 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Food;
 import model.FoodList;
-import seedu.bitbites.BitbitesResponses;
 import seedu.bitbites.AppContext;
+import seedu.bitbites.BitbitesResponses;
 
+/**
+ * AddCommand.java
+ *
+ * Adds a new food item into the food list, updating goal values.
+ * Parses user input for food name, calorie count, protein value, and date,
+ * validates all fields, and appends the new item to the FoodList.
+ *
+ * Command format: add n/NAME c/CALORIES p/PROTEIN d/DD-MM-YYYY
+ */
 public class AddCommand extends Command {
     private static final Logger logger = Logger.getLogger(AddCommand.class.getName());
     private final String fullCommand;
 
+    /**
+     * Constructs an AddCommand with the full user input string.
+     *
+     * @param fullCommand The raw command string entered by the user.
+     */
     public AddCommand(String fullCommand) {
         this.fullCommand = fullCommand;
     }
 
+    /**
+     * Executes the add command by parsing and validating the user input,
+     * then adds the new Food object to the FoodList.
+     * Displays daily goal progress after a successful add.
+     *
+     * @param context The application context containing FoodList and UserInterface.
+     * @return false always, as this command does not trigger application exit.
+     */
     // @@author bryanyeo3125
     @Override
     public boolean execute(AppContext context) {
@@ -51,7 +73,7 @@ public class AddCommand extends Command {
                     fullCommand.indexOf("d/") + 2
             ).trim();
 
-            // Validate fields are not empty
+            // Ensures that fields are not empty
             if (name.isEmpty() || caloriesStr.isEmpty() || proteinStr.isEmpty() || date.isEmpty()) {
                 logger.log(Level.WARNING, "Empty fields in add command");
                 System.out.println(correctFormat);
@@ -61,16 +83,17 @@ public class AddCommand extends Command {
             int calories = Integer.parseInt(caloriesStr);
             double protein = Double.parseDouble(proteinStr);
 
-            // Validate non-negative values
+            // Ensures non-negative values
             if (calories < 0 || protein < 0) {
                 logger.log(Level.WARNING, "Negative values in add command");
                 System.out.println("Calories and protein must be non-negative.");
                 return false;
             }
 
-            // Validate date format DD-MM-YYYY
+            // Ensures date format DD-MM-YYYY
             if (!date.matches("\\d{2}-\\d{2}-\\d{4}")) {
                 System.out.println("Date must be in DD-MM-YYYY format.");
+                return false;
             }
 
             // Assert statements
@@ -84,6 +107,7 @@ public class AddCommand extends Command {
             logger.log(Level.INFO, "Successfully added food: " + name +
                     " | Calories: " + calories + " | Protein: " + protein);
             System.out.println(BitbitesResponses.addMessage);
+            GoalsCommand.showDailyProgress(foodList);
 
         } catch (NumberFormatException e) {
             logger.log(Level.WARNING, "Invalid number format in: " + fullCommand);
