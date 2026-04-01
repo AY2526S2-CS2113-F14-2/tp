@@ -13,6 +13,7 @@ import command.TipsCommand;
 import command.ProfileCommand;
 import command.LoginCommand;
 import command.MotivateCommand;
+import command.FindCommand;
 import seedu.bitbites.BitbitesException;
 import seedu.bitbites.BitbitesResponses;
 
@@ -83,6 +84,10 @@ public class Parser {
             logger.log(Level.CONFIG, "Initiating user authentication and profile switching process");
             logger.log(Level.FINE, "Creating LoginCommand instance to handle user login flow");
             return new LoginCommand();
+        } else if(fullCommand.startsWith("find ")) {
+            logger.log(Level.CONFIG, "Find command received from user");
+            logger.log(Level.FINE, "Creating FindCommand instance to handle search functionality");
+            return new FindCommand(fullCommand);
         } else if (fullCommand.equals("motivate")) {
             logger.log(Level.CONFIG, "Motivate command received from user");
             logger.log(Level.FINE, "Creating MotivateCommand instance to handle motivate flow");

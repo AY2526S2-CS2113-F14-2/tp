@@ -856,6 +856,9 @@ class BitbitesTest {
         assertEquals(1, nonConsecutive.getLongestStreak());
     }
 
+    // ── FindCommand ───────────────────────────────────────
+    // TBD @RayminQAQ
+
     @Test
     public void sampleExit() {
         assertTrue(true);
