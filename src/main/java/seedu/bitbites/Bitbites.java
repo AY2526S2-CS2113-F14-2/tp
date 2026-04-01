@@ -16,6 +16,7 @@ package seedu.bitbites;
 import java.io.FileNotFoundException;
 
 import command.Command;
+import command.GoalsCommand;
 import model.FoodList;
 import model.PresetList;
 import parser.Parser;
@@ -55,8 +56,10 @@ public class Bitbites {
     }
     //@@author
 
+    //@@author rayminQAQ
     public void run() {
         ui.showWelcome();
+        GoalsCommand.loadGoalsIfNeeded(ui.getCurrentUser());
         boolean isExit = false;
         AppContext context = new AppContext(foods, presets, ui);
 
@@ -73,6 +76,7 @@ public class Bitbites {
             }
         }
     }
+    //@@author
 
     //@@author j-kennethh
     public static void main(String[] args) {
