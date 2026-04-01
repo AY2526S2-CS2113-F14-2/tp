@@ -2,15 +2,51 @@ package command;
 
 import seedu.bitbites.AppContext;
 
+/**
+ * Command.java
+ *
+ * Abstract base class for all commands in the application.
+ * Implements the Command design pattern, where each user action is
+ * encapsulated as a concrete Command subclass.
+ *
+ * Also provides shared utility methods for parsing prefix-based input,
+ * used by subclasses such as GoalsCommand and ProfileCommand.
+ */
+// @@author bryanyeo3125
 public abstract class Command {
+
+    /**
+     * Executes the command using the provided application context.
+     *
+     * @param context The application context containing FoodList, PresetList, and UserInterface.
+     * @return true if the application should exit, false otherwise.
+     */
     public abstract boolean execute(AppContext context);
 
+    /**
+     * Extracts the value associated with a given prefix from a command string,
+     * stopping at the next prefix or end of string.
+     *
+     * @param command  The full command string to extract from.
+     * @param prefix   The prefix whose value should be extracted (e.g. "n/").
+     * @param nextPfx  The next prefix that terminates the value, or null if none.
+     * @return The extracted value as a trimmed string.
+     */
     protected String extractValue(String command, String prefix, String nextPfx) {
         int start = command.indexOf(prefix) + prefix.length();
         int end = nextPfx == null ? command.length() : command.indexOf(nextPfx);
         return command.substring(start, end).trim();
     }
 
+    /**
+     * Finds the nearest prefix that appears after the current prefix in the command string.
+     * Used to determine the boundary when extracting a prefix's value.
+     *
+     * @param command       The full command string.
+     * @param currentPrefix The prefix currently being processed.
+     * @param prefixes      The array of all known prefixes to search through.
+     * @return The nearest following prefix string, or null if none found.
+     */
     protected String nextPrefix(String command, String currentPrefix, String[] prefixes) {
         int currentIndex = command.indexOf(currentPrefix);
         int nearest = Integer.MAX_VALUE;
@@ -28,3 +64,4 @@ public abstract class Command {
         return nearestPrefix;
     }
 }
+// @@author

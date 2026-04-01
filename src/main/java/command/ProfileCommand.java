@@ -5,14 +5,38 @@ import seedu.bitbites.AppContext;
 import storage.ProfileStorage;
 import ui.UserInterface;
 
+/**
+ * ProfileCommand.java
+ *
+ * Handles viewing, setting, and clearing the user's personal profile.
+ * The profile stores name, age, weight, and height, and derives
+ * BMI and BMR (Basal Metabolic Rate) from these values.
+ * Profiles are persisted to disk and loaded by name on each session.
+ *
+ * Supported commands:
+ *   profile: View your profile
+ *   profile set n/NAME a/AGE w/WEIGHT h/HEIGHT: Set or update profile fields
+ *   profile clear: Delete your profile
+ */
 // @@author bryanyeo3125
 public class ProfileCommand extends Command {
     private final String fullCommand;
 
+    /**
+     * Constructs a ProfileCommand with the full user input string.
+     *
+     * @param fullCommand The raw command string entered by the user.
+     */
     public ProfileCommand(String fullCommand) {
         this.fullCommand = fullCommand;
     }
 
+    /**
+     * Executes the profile command, either displaying, updating, or clearing the profile.
+     *
+     * @param context The application context containing UserInterface.
+     * @return false always, as this command does not trigger application exit.
+     */
     @Override
     public boolean execute(AppContext context) {
         UserInterface ui = context.getUi();
@@ -42,6 +66,13 @@ public class ProfileCommand extends Command {
         return false;
     }
 
+    /**
+     * Loads and displays the profile for the given user name.
+     * Shows name, age, weight, height, BMI and BMR.
+     * Prompts the user to set up a profile if none is found.
+     *
+     * @param name The name of the current user session.
+     */
     private void showProfile(String name) {
         Profile profile = ProfileStorage.loadProfile(name);
         if (profile == null) {
@@ -58,6 +89,14 @@ public class ProfileCommand extends Command {
         System.out.println("==================================");
     }
 
+    /**
+     * Parses and updates one or more profile fields from the command string.
+     * Loads any existing profile first to preserve unchanged fields.
+     * Saves the updated profile to disk on success.
+     *
+     * @param command The full command string containing profile prefixes and values.
+     * @param name    The name of the current user session.
+     */
     private void handleSetProfile(String command, String name) {
         try {
             Profile existing = ProfileStorage.loadProfile(name);
@@ -98,6 +137,12 @@ public class ProfileCommand extends Command {
         }
     }
 
+    /**
+     * Checks whether the command contains at least one valid profile prefix.
+     *
+     * @param command The command string to check.
+     * @return true if a valid prefix is found, false otherwise.
+     */
     private boolean hasValidProfilePrefix(String command) {
         return command.contains("n/") || command.contains("a/") ||
                 command.contains("w/") || command.contains("h/");
