@@ -84,7 +84,7 @@ public class Parser {
             logger.log(Level.CONFIG, "Initiating user authentication and profile switching process");
             logger.log(Level.FINE, "Creating LoginCommand instance to handle user login flow");
             return new LoginCommand();
-        } else if(fullCommand.startsWith("find ")) {
+        } else if(fullCommand.startsWith("find")) {
             logger.log(Level.CONFIG, "Find command received from user");
             logger.log(Level.FINE, "Creating FindCommand instance to handle search functionality");
             return new FindCommand(fullCommand);
