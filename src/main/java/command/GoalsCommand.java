@@ -104,6 +104,14 @@ public class GoalsCommand extends Command {
         System.out.println("================================");
     }
 
+    public static int getDailyCalorieGoal() {
+        return dailyCalorieGoal;
+    }
+
+    public static double getDailyProteinGoal() {
+        return dailyProteinGoal;
+    }
+
     private void handleSetGoals(String fullCommand) {
         String[] prefixes = {"dc/", "dp/", "wc/", "wp/"};
         try {
