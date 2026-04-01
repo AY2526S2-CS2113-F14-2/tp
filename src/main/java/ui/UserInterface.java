@@ -62,7 +62,9 @@ public class UserInterface {
         System.out.println("  " + food);
     }
 
-    /* Show the summary to the user. */
+    /**
+     * @param summary
+     */
     public void showSummary(NutritionSummary summary) {
         System.out.println(summary.toString());
     }
@@ -136,19 +138,15 @@ public class UserInterface {
 
     public void showHistoryTop(List<NutritionSummary> summaries, int n) {
         System.out.println("Top " + n + " Highest Calorie Days:");
-        if (summaries.isEmpty()) {
-            System.out.println("  No food history found.");
-            return;
-        }
-        for (int i = 0; i < summaries.size(); i++) {
-            NutritionSummary s = summaries.get(i);
-            System.out.printf("  %d. %s  %d kcal | %.1fg protein%n",
-                    i + 1, s.getDate(), s.getTotalCalories(), s.getTotalProtein());
-        }
+        filterHistory(summaries);
     }
 
     public void showHistoryBest(List<NutritionSummary> summaries, int n) {
         System.out.println("Top " + n + " Lowest Calorie Days:");
+        filterHistory(summaries);
+    }
+
+    private void filterHistory(List<NutritionSummary> summaries) {
         if (summaries.isEmpty()) {
             System.out.println("  No food history found.");
             return;

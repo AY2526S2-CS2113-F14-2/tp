@@ -1,6 +1,7 @@
 package seedu.bitbites;
 
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,6 +15,16 @@ import command.HelpCommand;
 import command.ListByDateCommand;
 import command.EditCommand;
 import command.ListCommand;
+import command.HistoryBestCommand;
+import command.HistoryCommand;
+import command.HistoryStreakCommand;
+import command.HistoryTopCommand;
+import command.SummaryByDateCommand;
+import command.SummaryCompareCommand;
+import command.SummaryRangeCommand;
+import command.TipsCommand;
+import model.NutritionSummary;
+import ui.ProgressBar;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -45,8 +56,8 @@ class BitbitesTest {
     void setUp() {
         foodList = new FoodList();
         ui = new UserInterface();
-        foodList.addFood(new Food("Burger", 450, 30, "2026-03-16"));
-        foodList.addFood(new Food("Salad", 200, 10, "2026-03-17"));
+        foodList.addFood(new Food("Burger", 450, 30, "27-03-2026"));
+        foodList.addFood(new Food("Salad", 200, 10, "28-03-2026"));
 
         tempFilePath = tempDir.resolve("test_data.text").toString();
         storage = new Storage(tempFilePath);
@@ -59,7 +70,7 @@ class BitbitesTest {
 
     @Test
     void parser_add_returnsCorrectCommand() {
-        Command command = Parser.parse("add n/Ramen c/600 p/30.0 d/2025-03-19");
+        Command command = Parser.parse("add n/Ramen c/600 p/30.0 d/19-03-2026");
         assertInstanceOf(AddCommand.class, command);
     }
 
@@ -76,12 +87,35 @@ class BitbitesTest {
     }
 
     @Test
+    void parser_tips_returnsCorrectCommand() {
+        Command command = Parser.parse("tips");
+        assertInstanceOf(TipsCommand.class, command);
+    }
+
+    @Test
     void parser_unknownCommand_throwsException() {
         assertThrows(BitbitesException.class, () ->
                 Parser.parse("unknowncommand")
         );
     }
 
+    // ── Help Command ───────────────────────────────────────
+    @Test
+    void helpCommand_doesNotModifyFoodList() {
+        int sizeBefore = foodList.size();
+        Parser.parse("help").execute(foodList, ui);
+        assertEquals(sizeBefore, foodList.size());
+    }
+
+    // ── TipsCommand ───────────────────────────────────────
+    @Test
+    void tipsCommand_doesNotModifyFoodList() {
+        int sizeBefore = foodList.size();
+        Parser.parse("tips").execute(foodList, ui);
+        assertEquals(sizeBefore, foodList.size());
+    }
+
+    // ── Delete Command ───────────────────────────────────────
     @Test
     void deleteCommand_validIndex_reducesSize() {
         int sizeBefore = foodList.size();
@@ -283,6 +317,281 @@ class BitbitesTest {
         assertEquals("01-04-2026", loadedFoods.get(0).getDate());
     }
     //@@author
+
+    // ── NutritionSummary ──────────────────────────────────
+    @Test
+    void nutritionSummary_correctTotalCalories() {
+        NutritionSummary summary = foodList.getSummaryByDate("27-03-2026");
+        assertEquals(450, summary.getTotalCalories());
+    }
+
+    @Test
+    void nutritionSummary_correctTotalProtein() {
+        NutritionSummary summary = foodList.getSummaryByDate("27-03-2026");
+        assertEquals(30.0, summary.getTotalProtein());
+    }
+
+    @Test
+    void nutritionSummary_correctItemCount() {
+        NutritionSummary summary = foodList.getSummaryByDate("27-03-2026");
+        assertEquals(1, summary.getItemCount());
+    }
+
+    // ── ProgressBar ───────────────────────────────────────
+    @Test
+    void progressBar_singleItem_fullBar() {
+        java.util.List<Food> items = foodList.getItemsByDate("27-03-2026");
+        String bar = ProgressBar.generateSegmented(items, 450);
+        assertEquals("[" + "=".repeat(30) + "]", bar);
+    }
+
+    @Test
+    void progressBar_emptyItems_emptyBar() {
+        String bar = ProgressBar.generateSegmented(
+                new java.util.ArrayList<>(), 0);
+        assertEquals("[]", bar);
+    }
+
+    @Test
+    void progressBar_multipleItems_containsSeparator() {
+        foodList.addFood(new Food("Tea", 50, 0.0, "27-03-2026"));
+        java.util.List<Food> items = foodList.getItemsByDate("27-03-2026");
+        String bar = ProgressBar.generateSegmented(items, foodList.getTotalCaloriesByDate("27-03-2026"));
+        assertTrue(bar.contains("|"));
+    }
+
+    // ── FoodList summary methods ──────────────────────────
+    @Test
+    void getTotalCaloriesByDate_correctSum() {
+        assertEquals(450, foodList.getTotalCaloriesByDate("27-03-2026"));
+    }
+
+    @Test
+    void getTotalProteinByDate_correctSum() {
+        assertEquals(30.0, foodList.getTotalProteinByDate("27-03-2026"));
+    }
+
+    @Test
+    void getItemCountByDate_correctCount() {
+        assertEquals(1, foodList.getItemCountByDate("27-03-2026"));
+    }
+
+    @Test
+    void getItemCountByDate_noItems() {
+        assertEquals(0, foodList.getItemCountByDate("01-01-2000"));
+    }
+
+    @Test
+    void getSummariesInRange_correctCount() {
+        java.util.List<NutritionSummary> summaries =
+                foodList.getSummariesInRange("27-03-2026", "29-03-2026");
+        assertEquals(2, summaries.size());
+    }
+
+    @Test
+    void getTopDaysByCalories_correctOrder() {
+        java.util.List<NutritionSummary> top = foodList.getTopDaysByCalories(2);
+        assertEquals(2, top.size());
+        assertTrue(top.get(0).getTotalCalories() >= top.get(1).getTotalCalories());
+    }
+
+    @Test
+    void getTopDaysByCalories_nLargerThanAvailable() {
+        java.util.List<NutritionSummary> top = foodList.getTopDaysByCalories(99);
+        assertEquals(foodList.getUniqueDates().size(), top.size());
+    }
+
+    @Test
+    void getBestDaysByCalories_correctOrder() {
+        java.util.List<NutritionSummary> best = foodList.getBestDaysByCalories(2);
+        assertEquals(2, best.size());
+        assertTrue(best.get(0).getTotalCalories() <= best.get(1).getTotalCalories());
+    }
+
+    @Test
+    void getCurrentStreak_correctValue() {
+        assertEquals(2, foodList.getCurrentStreak());
+    }
+
+    @Test
+    void getLongestStreak_correctValue() {
+        assertEquals(2, foodList.getLongestStreak());
+    }
+
+    @Test
+    void getLongestStreak_allConsecutive() {
+        FoodList consecutive = new FoodList();
+        consecutive.addFood(new Food("A", 100, 10.0, "27-03-2026"));
+        consecutive.addFood(new Food("B", 100, 10.0, "28-03-2026"));
+        consecutive.addFood(new Food("C", 100, 10.0, "29-03-2026"));
+        consecutive.addFood(new Food("D", 100, 10.0, "30-03-2026"));
+        assertEquals(4, consecutive.getLongestStreak());
+    }
+
+    // ── Summary Command ───────────────────────────────────
+    @Test
+    void parser_summaryByDate_returnsCorrectCommand() {
+        Command command = Parser.parse("summary d/27-03-2026");
+        assertInstanceOf(SummaryByDateCommand.class, command);
+    }
+
+    @Test
+    void parser_summaryRange_returnsCorrectCommand() {
+        Command command = Parser.parse("summary from/27-03-2026 to/29-03-2026");
+        assertInstanceOf(SummaryRangeCommand.class, command);
+    }
+
+    @Test
+    void parser_summaryCompare_returnsCorrectCommand() {
+        Command command = Parser.parse("summary compare d/27-03-2026 d/28-03-2026");
+        assertInstanceOf(SummaryCompareCommand.class, command);
+    }
+
+    @Test
+    void summaryByDateCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse("summary d/27-03-2026").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void summaryRangeCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse(
+                "summary from/27-03-2026 to/29-03-2026").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void summaryRangeCommand_fromAfterTo_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("summary from/29-03-2026 to/27-03-2026").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void summaryCompareCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse(
+                "summary compare d/27-03-2026 d/28-03-2026").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    // ── history command execute ───────────────────────────
+    @Test
+    void historyCommand_execute_returnsFalse() {
+        assertFalse(Parser.parse("history").execute(foodList, ui));
+    }
+
+    @Test
+    void historyCommand_doesNotModifyFoodList() {
+        int sizeBefore = foodList.size();
+        Parser.parse("history").execute(foodList, ui);
+        assertEquals(sizeBefore, foodList.size());
+    }
+
+    @Test
+    void historyCommand_emptyList_doesNotThrow() {
+        assertDoesNotThrow(() ->
+                Parser.parse("history").execute(new FoodList(), ui)
+        );
+    }
+
+    @Test
+    void historyTopCommand_execute_returnsFalse() {
+        assertFalse(Parser.parse("history /top 2").execute(foodList, ui));
+    }
+
+    @Test
+    void historyTopCommand_nLargerThanData_doesNotThrow() {
+        assertDoesNotThrow(() ->
+                Parser.parse("history /top 99").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void historyTopCommand_zeroN_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("history /top 0").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void historyBestCommand_execute_returnsFalse() {
+        assertFalse(Parser.parse("history /best 2").execute(foodList, ui));
+    }
+
+    @Test
+    void historyBestCommand_nLargerThanData_doesNotThrow() {
+        assertDoesNotThrow(() ->
+                Parser.parse("history /best 99").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void historyBestCommand_zeroN_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("history /best 0").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void historyBestCommand_invalidN_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("history /best abc").execute(foodList, ui)
+        );
+    }
+
+    @Test
+    void historyTopCommand_invalidN_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("history /top abc").execute(foodList, ui)
+        );
+    }
+
+    // ── HistoryStreakCommand ──────────────────────────────
+    @Test
+    void historyStreakCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse("history streak").execute(foodList, ui);
+        assertFalse(isExit);
+    }
+
+    @Test
+    void historyStreakCommand_doesNotModifyFoodList() {
+        int sizeBefore = foodList.size();
+        Parser.parse("history streak").execute(foodList, ui);
+        assertEquals(sizeBefore, foodList.size());
+    }
+
+    @Test
+    void historyStreakCommand_emptyList_doesNotThrow() {
+        assertDoesNotThrow(() ->
+                Parser.parse("history streak").execute(new FoodList(), ui)
+        );
+    }
+
+    @Test
+    void historyStreakCommand_consecutiveDays_correctCurrentStreak() {
+        assertEquals(2, foodList.getCurrentStreak());
+    }
+
+    @Test
+    void historyStreakCommand_consecutiveDays_correctLongestStreak() {
+        assertEquals(2, foodList.getLongestStreak());
+    }
+
+    @Test
+    void historyStreakCommand_nonConsecutive_currentStreakOne() {
+        FoodList nonConsecutive = new FoodList();
+        nonConsecutive.addFood(new Food("A", 100, 10.0, "27-03-2026"));
+        nonConsecutive.addFood(new Food("B", 100, 10.0, "29-03-2026")); // gap
+        assertEquals(1, nonConsecutive.getCurrentStreak());
+    }
+
+    @Test
+    void historyStreakCommand_nonConsecutive_longestStreakOne() {
+        FoodList nonConsecutive = new FoodList();
+        nonConsecutive.addFood(new Food("A", 100, 10.0, "27-03-2026"));
+        nonConsecutive.addFood(new Food("B", 100, 10.0, "29-03-2026")); // gap
+        assertEquals(1, nonConsecutive.getLongestStreak());
+    }
 
     @Test
     public void sampleExit() {
