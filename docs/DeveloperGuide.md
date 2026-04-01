@@ -1,4 +1,4 @@
-# BitBites Developer Guide
+'# BitBites Developer Guide
 
 ## Acknowledgements
 
@@ -79,6 +79,355 @@ When the user inputs the `delete` command followed by an index (e.g., `delete 2`
 5. **Postcondition Check:** An `assert` statement verifies that `foodList.size()` has decreased by exactly 1 after deletion.
 6. **Confirmation:** `ui.showDeletedFood(removed, foodList.size())` is called to print the removed item and the updated list size.
 
+---
+
+### 5. Design: Command Pattern and AppContext
+
+BitBites uses the **Command design pattern** to encapsulate each user action as a discrete object. This makes it straightforward to add new features without modifying existing parsing or execution logic.
+
+#### 5.1 The `Command` Abstract Class
+
+All executable actions extend the abstract `Command` class in `command/Command.java`. Each subclass must implement:
+
+```
+execute(AppContext context) → boolean
+```
+
+The return value signals whether the application should exit (`true`) or continue (`false`). This keeps the main application loop simple and decoupled from individual command logic.
+
+`Command` also provides two shared utility methods used by subclasses that parse prefix-based input (e.g., `n/NAME`, `dc/CALORIES`):
+
+- `extractValue(command, prefix, nextPrefix)` — extracts the value between two known prefixes.
+- `nextPrefix(command, currentPrefix, prefixes[])` — finds the closest following prefix to determine value boundaries.
+
+These utility methods are inherited by `GoalsCommand`, `ProfileCommand`, `AddCommand`, and others, avoiding duplicated parsing logic across the codebase.
+
+The class diagram below shows the relationship between `Command` and its concrete subclasses:
+
+![Command class diagram](uml/command_class.png)
+
+#### 5.2 The `AppContext` Class
+
+Rather than passing `FoodList`, `PresetList`, and `UserInterface` as separate parameters to every command, BitBites wraps them in a single `AppContext` object (following the **Context Object pattern**). This means:
+
+- Adding a new component to the application does not require updating every `execute()` method signature.
+- Each command retrieves only what it needs from the context.
+
+A typical command begins like this:
+
+```java
+FoodList foodList = context.getFoodList();
+UserInterface ui = context.getUi();
+```
+
+`AppContext` is constructed once at application startup and passed through to every command execution.
+
+---
+
+### 6. Managing User Profiles `profile`
+
+The `profile` feature allows each user to store and retrieve their personal physical attributes. It integrates with the `goals` feature to automatically set sensible calorie targets when a profile is saved.
+
+#### 6.1 Implementation Details
+
+The feature spans three classes: `ProfileCommand` (command logic), `Profile` (data model), and `ProfileStorage` (disk persistence).
+
+**Supported sub-commands:**
+
+| Command | Behaviour |
+|---|---|
+| `profile` | View the current user's saved profile |
+| `profile set n/NAME g/GENDER a/AGE w/WEIGHT h/HEIGHT` | Create or update profile fields |
+| `profile clear` | Delete the current user's profile file |
+
+**Executing `profile set ...`:**
+
+When the user provides one or more profile fields, `handleSetProfile()` is invoked. The steps are:
+
+1. **Load Existing Profile:** `ProfileStorage.loadProfile(name)` is called first. If an existing profile is found, its current values are used as defaults so that only the supplied fields are changed — unchanged fields are preserved.
+2. **Field Extraction:** Each field is extracted from the command string using the inherited `extractValue()` and `nextPrefix()` utilities from `Command`.
+3. **Gender Validation:** The `g/` value must be exactly `"male"` or `"female"` (case-insensitive). Any other value causes an early return with an error message.
+4. **Range Validation:** Age, weight, and height must all be non-negative. A check is performed before the `Profile` object is constructed.
+5. **Persistence:** The updated `Profile` is saved to disk via `ProfileStorage.saveProfile(profile)`.
+6. **BMR Auto-Set:** After saving, `GoalsCommand.autoSetGoalsFromBmr(name, profile.getBmr())` is called automatically to update the user's daily and weekly calorie goals based on their new BMR.
+
+The sequence diagram below illustrates the execution of `profile set ...`:
+
+```
+User → ProfileCommand.execute()
+         → ProfileStorage.loadProfile()    // load existing or use defaults
+         → extractValue() [repeated]       // parse each prefix
+         → new Profile(...)
+         → ProfileStorage.saveProfile()    // persist to disk
+         → GoalsCommand.autoSetGoalsFromBmr()  // update calorie goals
+```
+
+#### 6.2 The `Profile` Model
+
+`Profile` stores five fields: `name`, `gender`, `age`, `weight` (kg), and `height` (cm). It derives two computed values:
+
+- **BMI** — calculated as `weight / (height in metres)²`
+- **BMR** — calculated using the Mifflin-St Jeor formula:
+   - Male: `(10 × weight) + (6.25 × height) − (5 × age) + 5`
+   - Female: `(10 × weight) + (6.25 × height) − (5 × age) − 161`
+
+BMI is also categorised into `Underweight`, `Normal`, `Overweight`, or `Obese` based on standard thresholds.
+
+---
+
+### 7. Managing Nutritional Goals `goals`
+
+The `goals` feature allows users to set daily and weekly calorie and protein targets, and view their current progress against those targets. Goals are persisted per user and are automatically set when a profile is saved.
+
+#### 7.1 Implementation Details
+
+The feature is driven by `GoalsCommand.java`, with persistence handled by `GoalsStorage.java`.
+
+**Supported sub-commands:**
+
+| Command | Behaviour |
+|---|---|
+| `goals` | View daily and weekly progress against current targets |
+| `goals set dc/CAL dp/PROT wc/CAL wp/PROT` | Set one or more goal values |
+
+All four goal values (`dc/`, `dp/`, `wc/`, `wp/`) are optional in a single `goals set` command — the user may supply any combination and only the specified fields are updated.
+
+**Default goal values** (applied when no saved goals exist):
+
+| Goal | Default |
+|---|---|
+| Daily calories | 2000 kcal |
+| Daily protein | 50.0 g |
+| Weekly calories | 14000 kcal |
+| Weekly protein | 350.0 g |
+
+**Executing `goals` (view progress):**
+
+`showGoalsMenu()` is called. It computes today's totals and the current week's totals by iterating over the `FoodList` and comparing each item's date to today and to the Monday–Sunday window containing today. Results are printed alongside the saved targets, with a `(Goal reached!)` indicator when a target is met or exceeded.
+
+**Executing `goals set ...`:**
+
+`handleSetGoals()` parses each recognised prefix using the inherited `extractValue()` utility. For each prefix present, the value is parsed and validated (must be non-negative), the corresponding static field is updated, and a confirmation message is printed. All four values are then written to disk via `GoalsStorage.saveGoals()`.
+
+**Goal persistence across sessions:**
+
+Goals are loaded lazily at the start of each `GoalsCommand.execute()` call via `loadGoalsIfNeeded()`. This method calls `GoalsStorage.loadGoals()` and, if a saved file exists, overwrites the static defaults with the saved values.
+
+**Static daily progress summary:**
+
+`GoalsCommand.showDailyProgress(FoodList)` is a static utility method called by `AddCommand` (and any other command that modifies the food list) to print a brief progress summary after each change. This gives the user immediate feedback on how their latest entry affects their daily targets.
+
+**Auto-setting goals from BMR:**
+
+`GoalsCommand.autoSetGoalsFromBmr(name, bmr)` is called by `ProfileCommand` after a profile is saved. It sets the daily calorie goal to the user's BMR and the weekly goal to `BMR × 7`, then saves to disk. Protein goals are not changed by this auto-set.
+
+The sequence diagram below illustrates the execution of `goals set ...`:
+
+```
+User → GoalsCommand.execute()
+         → GoalsStorage.loadGoals()        // load persisted goals (if any)
+         → handleSetGoals()
+              → extractValue() [per prefix]
+              → validate each value
+              → update static fields
+              → GoalsStorage.saveGoals()   // persist updated goals
+```
+
+---
+
+### 8. Storage Components
+
+BitBites uses two independent storage classes — `ProfileStorage` and `GoalsStorage` — both located in the `storage` package. Each class reads and writes plain-text key-value files stored in the `data/` directory.
+
+#### 8.1 File Naming Convention
+
+Both storage classes derive a safe filename from the user's name by converting it to lowercase and replacing spaces with underscores:
+
+```
+data/<safeName>_profile.txt
+data/<safeName>_goals.txt
+```
+
+For example, a user named `"John Doe"` produces the files `data/john_doe_profile.txt` and `data/john_doe_goals.txt`. This allows multiple users to maintain independent data on the same system.
+
+#### 8.2 File Formats
+
+**Profile file** (`<name>_profile.txt`):
+```
+name=VALUE
+gender=VALUE
+age=VALUE
+weight=VALUE
+height=VALUE
+```
+
+**Goals file** (`<name>_goals.txt`):
+```
+dailyCalories=VALUE
+dailyProtein=VALUE
+weeklyCalories=VALUE
+weeklyProtein=VALUE
+```
+
+Both files are read line-by-line in a fixed order. Each line is split on the `=` character and the second element is parsed into the appropriate type (`int`, `double`, or `String`).
+
+#### 8.3 Error Handling
+
+Both `loadProfile()` and `loadGoals()` return `null` if the file does not exist or if any line fails to parse (caught via `IOException` or `NumberFormatException`). Callers treat a `null` return as "no saved data" and fall back to defaults. This means a corrupted or missing file degrades gracefully without crashing the application.
+
+#### 8.4 Key Public Methods
+
+| Class | Method | Description |
+|---|---|---|
+| `ProfileStorage` | `saveProfile(Profile)` | Writes profile fields to disk |
+| `ProfileStorage` | `loadProfile(String name)` | Reads and returns a `Profile`, or `null` |
+| `ProfileStorage` | `profileExists(String name)` | Checks if a profile file exists |
+| `ProfileStorage` | `deleteProfile(String name)` | Deletes the profile file |
+| `GoalsStorage` | `saveGoals(name, dc, dp, wc, wp)` | Writes all four goal values to disk |
+| `GoalsStorage` | `loadGoals(String name)` | Returns a `double[]` of four values, or `null` |
+| `GoalsStorage` | `goalsExist(String name)` | Checks if a goals file exists |
+
+---
+
+## Product Scope
+
+### Target User Profile
+### 4. Deleting a Food Item `delete`
+The `delete` feature allows users to remove a logged food item from the list by its
+displayed index. After deletion, a daily progress summary is shown to reflect the
+updated intake against the user's goals.
+
+#### 4.1 Implementation Details
+The feature is implemented in `DeleteCommand`, following the Command Pattern.
+`Parser` creates the command object and `Bitbites` calls `execute(context)`.
+
+**Executing `delete INDEX`:**
+1. **Parsing and Validation:** The command is split by space. If the index is missing,
+   a `BitbitesException` is thrown.
+2. **Index Conversion:** The index is parsed to `int` and converted from 1-based to
+   0-based. Non-numeric input throws a `BitbitesException`.
+3. **Defensive Programming:** An `assert` verifies the converted index is non-negative.
+4. **Deletion:** `FoodList.deleteFood(index)` performs bounds checking internally and
+   removes the item.
+5. **Postcondition Check:** An `assert` verifies `foodList.size()` decreased by 1.
+6. **Confirmation:** `ui.showDeletedFood()` prints the removed item and remaining count.
+7. **Goal Progress:** `GoalsCommand.showDailyProgress()` prints today's intake against
+   the daily goal.
+8. **Persistence:** `foodStorage.save(foods)` is called in the main loop after execution.
+
+![delete sequence diagram](uml/delete.png)
+
+### 5. Editing a Food Item `edit`
+The `edit` feature allows users to update one or more fields of an existing food item
+without deleting and re-adding it. Only the specified fields are changed.
+**Format:** `edit INDEX [n/NAME] [c/CALORIES] [p/PROTEIN] [d/DATE]`
+At least one field must be provided.
+
+#### 5.1 Implementation Details
+**Executing `edit INDEX [fields]`:**
+1. **Parsing:** The command is split into three parts: keyword, index, and fields string.
+2. **Index Conversion:** Same as `DeleteCommand`.
+3. **Field Detection:** The fields string is checked for `n/`, `c/`, `p/`, `d/`.
+   At least one must be present or a `BitbitesException` is thrown.
+4. **In-place Update:** `FoodList.getFood(index)` returns a reference to the existing
+   `Food` object. Each field is extracted using `extractField()` which stops at the
+   next prefix, then applied via the corresponding setter.
+5. **Validation:** Calories and protein must be non-negative. Date must match
+   `\d{2}-\d{2}-\d{4}`.
+6. **Confirmation:** `ui.showEditedFood()` prints the updated food item.
+7. **Persistence:** `foodStorage.save(foods)` is called in the main loop.
+
+![edit sequence diagram](uml/edit.png)
+
+### 6. Help Command `help`
+The `help` command displays a summary of all available commands and their formats.
+**Format:** `help`
+
+#### 6.1 Implementation Details
+`HelpCommand.execute()` delegates entirely to `ui.showHelp()`, which prints `BitbitesResponses.helpMessage`. No data access or modification occurs.
+
+### 7. Summary Commands `summary`
+The `summary` feature provides nutritional breakdowns for logged food items. It supports four sub-commands.
+
+| Command | Description |
+|---------|-------------|
+| `summary d/DATE` | Summary for a specific date |
+| `summary from/DATE1 to/DATE2` | Trend across a date range |
+| `summary compare d/DATE1 d/DATE2` | Comparison of two days |
+
+#### 7.1 Implementation Details
+Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` objects from `FoodList` and pass them to `UserInterface`.
+
+`NutritionSummary` stores aggregated `totalCalories`, `totalProtein`, `itemCount`, and the list of `Food` items. `ProgressBar.generateSegmented()` generates a bar
+where each segment's width represents that meal's calorie share of the day's total.
+
+**`summary d/DATE`:**
+1. The date is extracted after `d/`.
+2. If no items exist for the date, a message is shown and execution stops.
+3. Goal values are retrieved from `GoalsCommand.getDailyCalorieGoal()` and `getDailyProteinGoal()`.
+4. `ui.showSummary(summary, calorieGoal, proteinGoal)` prints the breakdown and goal status.
+
+![summary by date sequence diagram](uml/summaryByDate.png)
+
+**`summary from/DATE1 to/DATE2`:**
+1. Both `from/` and `to/` prefixes must be present.
+2. Dates are parsed using `LocalDate.parse()` with `dd-MM-yyyy` formatter.
+3. If `from` is after `to`, a `BitbitesException` is thrown.
+4. `FoodList.getSummariesInRange()` returns daily summaries within the range.
+5. If no summaries found, a message is shown and execution stops.
+6. `ui.showSummaryRange()` displays each day's bar scaled to the highest-calorie day.
+
+**`summary compare d/DATE1 d/DATE2`:**
+1. The command is split by `d/` — at least 3 parts must exist.
+2. Both dates are extracted and checked for emptiness.
+3. If either date has no items, a message is shown and execution stops early.
+4. `FoodList.getSummaryByDate()` is called for each date.
+5. `ui.showSummaryCompare()` displays both days side by side with calorie and protein differences.
+
+### 8. History Commands `history`
+The `history` feature shows a chronological log of all recorded days. It supports
+four sub-commands.
+
+| Command | Description |
+|---------|-------------|
+| `history` | All recorded days with breakdown bars |
+| `history /top N` | Top N highest calorie days |
+| `history /best N` | Top N days closest to daily calorie goal |
+| `history streak` | Current and longest consecutive recording streak |
+
+#### 8.1 Implementation Details
+**`history` and `history /top N`:**
+
+`HistoryCommand` and `HistoryTopCommand` retrieve `NutritionSummary` lists from
+`FoodList`. Each day's bar in `showHistory()` is scaled relative to the
+highest-calorie day — the busiest day fills the full bar width and others are
+proportionally shorter.
+
+**`history`:**
+`HistoryCommand` checks whether any food has been logged today using
+`LocalDate.now()`. It retrieves all daily summaries and passes them with a
+`recordedToday` flag to `ui.showHistory()`, which appends a reminder if today
+has not been logged.
+
+**`history /top N`:**
+`HistoryTopCommand` splits the command by `/top` to extract `N`. It calls
+`foodList.getTopDaysByCalories(N)` which sorts summaries by total calories
+descending and returns the top N.
+
+**`history /best N`:**
+`HistoryBestCommand` calls `foodList.getDaysClosestToGoal(n, calorieGoal)`, which
+sorts summaries by `|totalCalories - dailyCalorieGoal|` ascending, surfacing the
+days where intake was closest to the user's target.
+
+**`history streak`:**
+`HistoryStreakCommand` calls `getCurrentStreak()` and `getLongestStreak()`.
+Streak calculation uses `LocalDate.parse()` with `dd-MM-yyyy` format to compare
+consecutive dates. `getCurrentStreak()` also checks whether the last recorded date
+is today or yesterday using `LocalDate.now()` — if neither, the streak returns 0.
+
+![history streak sequence diagram](uml/historyStreak.png)
+## Product scope
+### Target user profile
 ## Product scope
 ### Target user profile
 
