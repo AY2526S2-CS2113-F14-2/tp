@@ -1,4 +1,4 @@
-# User Guide
+# BitBites User Guide
 
 ## Introduction
 
@@ -8,8 +8,8 @@
 
 {Give steps to get started quickly}
 
-1. Ensure that you have Java 17 or above installed.
-1. Down the latest version of `Duke` from [here](http://link.to/duke).
+1. Ensure that you have Java 17 installed.
+2. Download the latest version of `BitBites` from [here](https://github.com/AY2526S2-CS2113-F14-2/tp/releases).
 
 ## Features 
 
@@ -28,6 +28,30 @@ Example of usage:
 `todo n/Write the rest of the User Guide d/next week`
 
 `todo n/Refactor the User Guide to remove passive voice d/13/04/2020`
+
+### Listing all food items: `list`
+Displays a complete chronological history of all the food items you have ever logged.
+
+Format: `list`
+
+* The list will display each food item's name, calories, protein, and the date it was logged.
+* Items are numbered sequentially.
+
+Example of usage:
+
+`list`
+
+### Listing food items by date: `list d/DATE`
+Filters your food list and displays only the items consumed on a specific date.
+
+Format: `list d/DATE`
+
+* The `DATE` must strictly follow the `DD-MM-YYYY` format.
+* If no food items were logged on that date, the list will simply be empty.
+
+Example of usage:
+
+`list d/27-03-2026`
 
 ### Exiting the application: `exit`
 
