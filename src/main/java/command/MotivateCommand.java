@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import model.NutritionSummary;
 import model.Food;
 import model.FoodList;
@@ -14,11 +15,11 @@ import ui.UserInterface;
 
 /**
  * MotivateCommand.java
- *
+ * <p>
  * Provides personalized motivational messages and encouragement to users.
- *
+ * <p>
  * Supported commands:
- *   motivate - Display random motivational message
+ * motivate - Display random motivational message
  */
 //@@author RayminQAQ
 public class MotivateCommand extends Command {
@@ -56,16 +57,16 @@ public class MotivateCommand extends Command {
         String date = extractDate(fullCommand);
 
         switch (motivationType) {
-            // case "progress":
-            //     showProgressMotivation(foodList, currentUser, date);
-            //     break;
-            // case "goals":
-            //     showGoalsMotivation(foodList, currentUser, date);
-            //     break;
-            case "random":
-            default:
-                showRandomMotivation();
-                break;
+        // case "progress":
+        //     showProgressMotivation(foodList, currentUser, date);
+        //     break;
+        // case "goals":
+        //     showGoalsMotivation(foodList, currentUser, date);
+        //     break;
+        case "random":
+        default:
+            showRandomMotivation();
+            break;
         }
 
         logger.log(Level.FINE, "Motivation displayed for type: " + motivationType);
@@ -121,7 +122,7 @@ public class MotivateCommand extends Command {
      * Gets a NutritionSummary for a specific date.
      *
      * @param foodList The list of food items.
-     * @param date The date in DD-MM-YYYY format.
+     * @param date     The date in DD-MM-YYYY format.
      * @return A NutritionSummary for the specified date.
      */
     private NutritionSummary getSummaryForDate(FoodList foodList, String date) {
@@ -137,8 +138,8 @@ public class MotivateCommand extends Command {
             }
         }
 
-        return new NutritionSummary(date, totalCalories, totalProtein, 
-                                     dateFoods.size(), dateFoods);
+        return new NutritionSummary(date, totalCalories, totalProtein,
+                dateFoods.size(), dateFoods);
     }
 }
 //@@author
