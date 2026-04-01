@@ -920,28 +920,28 @@ class BitbitesTest {
     }
 
     @Test
-    void goalsCommand_set_missingPrefixes_doesNotThrow() {
+    void goalsCommand_missingPrefixes_doesNotThrow() {
         assertDoesNotThrow(() ->
                 Parser.parse("goals set").execute(context)
         );
     }
 
     @Test
-    void goalsCommand_set_invalidPrefix_doesNotThrow() {
+    void goalsCommand_invalidPrefix_doesNotThrow() {
         assertDoesNotThrow(() ->
                 Parser.parse("goals set xx/100").execute(context)
         );
     }
 
     @Test
-    void goalsCommand_set_negativeValue_doesNotThrow() {
+    void goalsCommand_negativeValue_doesNotThrow() {
         assertDoesNotThrow(() ->
                 Parser.parse("goals set dc/-100").execute(context)
         );
     }
 
     @Test
-    void goalsCommand_set_nonNumericValue_doesNotThrow() {
+    void goalsCommand_nonNumericValue_doesNotThrow() {
         assertDoesNotThrow(() ->
                 Parser.parse("goals set dc/abc").execute(context)
         );
@@ -982,21 +982,21 @@ class BitbitesTest {
     }
 
     @Test
-    void profileCommand_set_missingFields_doesNotThrow() {
+    void profileCommand_missingFields_doesNotThrow() {
         assertDoesNotThrow(() ->
                 Parser.parse("profile set").execute(context)
         );
     }
 
     @Test
-    void profileCommand_set_invalidGender_doesNotThrow() {
+    void profileCommand_invalidGender_doesNotThrow() {
         assertDoesNotThrow(() ->
                 Parser.parse("profile set n/Bryan g/unknown a/22 w/80 h/181").execute(context)
         );
     }
 
     @Test
-    void profileCommand_set_negativeAge_doesNotThrow() {
+    void profileCommand_negativeAge_doesNotThrow() {
         assertDoesNotThrow(() ->
                 Parser.parse("profile set n/Bryan g/male a/-1 w/80 h/181").execute(context)
         );
@@ -1031,13 +1031,13 @@ class BitbitesTest {
     }
 
     @Test
-    void profile_bmr_male_correctValue() {
+    void profile_bmrMale_correct() {
         model.Profile profile = new model.Profile("Bryan", "male", 22, 80, 181);
         assertEquals(1826, profile.getBmr());
     }
 
     @Test
-    void profile_bmr_female_correctValue() {
+    void profile_bmrFemale_correct() {
         model.Profile profile = new model.Profile("Alice", "female", 22, 60, 165);
         assertEquals(1360, profile.getBmr());
     }
