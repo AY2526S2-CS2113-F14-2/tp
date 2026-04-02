@@ -1,0 +1,57 @@
+@startuml goals_set
+skinparam arrowThickness 1.1
+skinparam maxMessageSize 150
+
+box "Logic" #LightBlue
+participant "parser:Parser" as Parser
+participant "cmd:GoalsCommand" as Goals
+end box
+
+box "Storage" #LightYellow
+participant "storage:GoalsStorage" as GStorage
+end box
+
+-> Parser : parse("goals set dc/CAL dp/PROT wc/CAL wp/PROT")
+activate Parser
+
+Parser -> Goals ** : new GoalsCommand(fullCommand)
+Parser -> Goals : execute(context)
+activate Goals
+
+Goals -> GStorage : loadGoals(name)
+activate GStorage
+GStorage --> Goals : double[] {dc, dp, wc, wp} (or null)
+deactivate GStorage
+
+Goals -> Goals : loadGoalsIfNeeded() — overwrite defaults if file exists
+
+alt fullCommand equals "goals set" (no prefixes)
+    Goals -> Goals : print format reminder, return false
+end
+
+alt no valid prefix found (not dc/, dp/, wc/, wp/)
+    Goals -> Goals : print unknown prefix error, return false
+end
+
+Goals -> Goals : handleSetGoals(fullCommand)
+
+loop for each prefix present (dc/, dp/, wc/, wp/)
+    Goals -> Goals : extractValue() for prefix
+    alt value < 0 OR non-numeric
+        Goals -> Goals : print error, return false
+    end
+    Goals -> Goals : update static goal field
+    Goals -> Goals : print confirmation message
+end
+
+Goals -> GStorage : saveGoals(name, dc, dp, wc, wp)
+activate GStorage
+GStorage --> Goals
+deactivate GStorage
+
+Goals --> Parser : return false
+deactivate Goals
+
+<-- Parser
+deactivate Parser
+@enduml

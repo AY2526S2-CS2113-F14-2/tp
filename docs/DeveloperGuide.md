@@ -94,7 +94,7 @@ The feature is driven by the `execute()` method in `AddCommand.java`. It depends
 
 **Executing `add n/NAME c/CALORIES p/PROTEIN d/DATE`:**
 When the user inputs the `add` command followed by the required parameters, `execute()` is invoked. The execution follows these steps:
-1. **Prefix Validation:** The method checks that all four required prefixes (`n/`, `c/`, `p/`, `d/`) are present in the command. If any are missing, the correct format reminder is printed and execution stops early.
+1. **Prefix Validation:** The method checks that the required prefixes (`n/`, `c/`, `p/`) are present in the command. If any are missing, the correct format reminder is printed and execution stops early. `/d` is optional and will input the current date if omitted.
 2. **Field Extraction:** Each field is extracted using `String.substring()` based on the positions of the prefixes. Extracted values are trimmed of leading and trailing whitespace.
 3. **Empty Field Check:** If any extracted field is empty after trimming, the format reminder is displayed again and execution stops early.
 4. **Type Parsing and Validation:** `calories` is parsed as an `int` and `protein` as a `double`. Both values must be non-negative. A `NumberFormatException` is caught if parsing fails, and a descriptive error is shown to the user.
@@ -207,14 +207,7 @@ When the user provides one or more profile fields, `handleSetProfile()` is invok
 
 The sequence diagram below illustrates the execution of `profile set ...`:
 
-```
-User → ProfileCommand.execute()
-         → ProfileStorage.loadProfile()    // load existing or use defaults
-         → extractValue() [repeated]       // parse each prefix
-         → new Profile(...)
-         → ProfileStorage.saveProfile()    // persist to disk
-         → GoalsCommand.autoSetGoalsFromBmr()  // update calorie goals
-```
+![profile set sequence diagram](uml/profile_set.png)
 
 #### 8.2 The `Profile` Model
 
@@ -277,15 +270,7 @@ Goals are loaded lazily at the start of each `GoalsCommand.execute()` call via `
 
 The sequence diagram below illustrates the execution of `goals set ...`:
 
-```
-User → GoalsCommand.execute()
-         → GoalsStorage.loadGoals()        // load persisted goals (if any)
-         → handleSetGoals()
-              → extractValue() [per prefix]
-              → validate each value
-              → update static fields
-              → GoalsStorage.saveGoals()   // persist updated goals
-```
+![goals set sequence diagram](uml/goals_set.png)
 
 ---
 

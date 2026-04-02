@@ -1,0 +1,64 @@
+@startuml profile_set
+skinparam arrowThickness 1.1
+skinparam maxMessageSize 150
+
+box "Logic" #LightBlue
+participant "parser:Parser" as Parser
+participant "cmd:ProfileCommand" as Profile
+end box
+
+box "Storage" #LightYellow
+participant "storage:ProfileStorage" as PStorage
+end box
+
+box "Goals" #LightGreen
+participant "goals:GoalsCommand" as Goals
+end box
+
+-> Parser : parse("profile set n/NAME g/GENDER a/AGE w/WEIGHT h/HEIGHT")
+activate Parser
+
+Parser -> Profile ** : new ProfileCommand(fullCommand)
+Parser -> Profile : execute(context)
+activate Profile
+
+alt missing prefix OR blank "profile set"
+    Profile -> Profile : print format error, return false
+end
+
+Profile -> PStorage : loadProfile(name)
+activate PStorage
+PStorage --> Profile : existing Profile (or null)
+deactivate PStorage
+
+Profile -> Profile : extractValue() for each prefix (n/, g/, a/, w/, h/)
+note right : preserves unchanged fields\nfrom existing profile
+
+alt invalid gender (not male/female)
+    Profile -> Profile : print error, return false
+end
+
+alt age/weight/height < 0
+    Profile -> Profile : print error, return false
+end
+
+Profile -> Profile : new Profile(name, gender, age, weight, height)
+
+Profile -> PStorage : saveProfile(profile)
+activate PStorage
+PStorage --> Profile
+deactivate PStorage
+
+Profile -> Profile : showProfile(name)
+
+Profile -> Goals : autoSetGoalsFromBmr(name, profile.getBmr())
+activate Goals
+Goals --> Profile : daily + weekly calorie goals updated
+deactivate Goals
+
+Profile --> Parser : return false
+deactivate Profile
+
+<-- Parser
+deactivate Parser
+@enduml

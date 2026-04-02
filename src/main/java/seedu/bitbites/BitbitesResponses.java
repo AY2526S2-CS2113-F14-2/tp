@@ -71,6 +71,7 @@ public class BitbitesResponses {
             + "  profile set n/NAME a/AGE w/WEIGHT h/HEIGHT - Set up your profile\n"
             + "  profile list                            - List all saved profiles\n"
             + "  profile clear                           - Clear your profile\n"
+            + "  login                                   - Switch between profiles\n"
             + "  tips                                    - Show tips for estimating calories and protein\n"
             + "  help                                    - Show help message\n"
             + "  exit                                    - Exit the application\n"
