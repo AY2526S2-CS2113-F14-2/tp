@@ -37,11 +37,11 @@ public class LoginCommand extends Command {
         UserInterface ui = context.getUi();
 
         logger.log(Level.INFO, "User initiated login process");
-        
+
         System.out.println("========== LOGIN ==========");
         System.out.println("Enter your name to login:");
         String username = ui.readCommand().trim();
-        
+
         if (username.isEmpty()) {
             System.out.println("Username cannot be empty.");
             logger.log(Level.WARNING, "Login attempted with empty username");
@@ -54,10 +54,14 @@ public class LoginCommand extends Command {
         Profile profile = ProfileStorage.loadProfile(username);
         if (profile != null) {
             logger.log(Level.INFO, "Existing profile found for user: " + username);
+            ui.setCurrentUser(username);                          // ADD THIS
+            GoalsCommand.loadGoalsIfNeeded(username);             // ADD THIS
             System.out.println("Welcome back, " + username + "!");
             displayProfile(profile);
         } else {
             logger.log(Level.INFO, "No existing profile found for user: " + username);
+            ui.setCurrentUser(username);                          // ADD THIS
+            GoalsCommand.loadGoalsIfNeeded(username);             // ADD THIS
             System.out.println("Hello, " + username + "!");
             System.out.println("No profile found. Let's set up your profile:");
             System.out.println("  profile set n/" + username + " g/GENDER a/AGE w/WEIGHT h/HEIGHT");

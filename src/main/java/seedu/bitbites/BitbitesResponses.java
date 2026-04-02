@@ -70,7 +70,6 @@ public class BitbitesResponses {
             + "  profile                                 - View your profile, BMI and BMR\n"
             + "  profile set n/NAME a/AGE w/WEIGHT h/HEIGHT - Set up your profile\n"
             + "  profile list                            - List all saved profiles\n"
-            + "  profile switch NAME                     - Switch to another profile\n"
             + "  profile clear                           - Clear your profile\n"
             + "  tips                                    - Show tips for estimating calories and protein\n"
             + "  help                                    - Show help message\n"
