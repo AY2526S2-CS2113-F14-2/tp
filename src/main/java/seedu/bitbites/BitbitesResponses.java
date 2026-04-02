@@ -32,7 +32,7 @@ public class BitbitesResponses {
     // Add Messages
     public static String ADD_MESSAGE = "Got it. I've added the food item!";
     public static String ADD_FORMAT_REMINDER = "Please use the correct format: " +
-            "add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G d/DD-MM-YYYY";
+            "add n/NAME c/CALORIES_IN_KCAL p/PROTEIN_IN_G [d/DD-MM-YYYY]";
     // List Message
     public static String LIST_MESSAGE = "Here are all the food items in your list:";
     // List From Date Message

@@ -47,7 +47,7 @@ public class AddCommand extends Command {
 
         // Check that all required prefixes exist
         if (!fullCommand.contains("n/") || !fullCommand.contains("c/") ||
-                !fullCommand.contains("p/") || !fullCommand.contains("d/")) {
+                !fullCommand.contains("p/")) {
             logger.log(Level.WARNING, "Missing required fields in add command");
             System.out.println(correctFormat);
             return false;
@@ -73,8 +73,14 @@ public class AddCommand extends Command {
                     fullCommand.indexOf("d/") + 2
             ).trim();
 
+            // Default to today if date is empty
+            if (date.isEmpty()) {
+                date = java.time.LocalDate.now().format(
+                        java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            }
+
             // Ensures that fields are not empty
-            if (name.isEmpty() || caloriesStr.isEmpty() || proteinStr.isEmpty() || date.isEmpty()) {
+            if (name.isEmpty() || caloriesStr.isEmpty() || proteinStr.isEmpty()) {
                 logger.log(Level.WARNING, "Empty fields in add command");
                 System.out.println(correctFormat);
                 return false;
