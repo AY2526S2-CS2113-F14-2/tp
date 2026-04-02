@@ -23,8 +23,8 @@ import seedu.bitbites.BitbitesResponses;
  * UserInterface manages all interactions between the chatbot and the user.
  * Handles display of messages and reading of user commands from the console.
  */
-//@@author rayminQAQ
 public class UserInterface {
+    //@@author rayminQAQ
     /**
      * The scanner used to read user input from the console.
      */
@@ -252,6 +252,7 @@ public class UserInterface {
         System.out.println(BitbitesResponses.tipsMessage);
     }
 
+    //@@author rayminQAQ
     /* Show the exit message to the user. */
     public void showExit() {
         System.out.println(BitbitesResponses.exitMessage);
@@ -260,7 +261,8 @@ public class UserInterface {
     public void showHelp() {
         System.out.println(BitbitesResponses.helpMessage);
     }
-
+    //@@author
+    
     public void showDeletedFood(Food food, int remaining) {
         System.out.println(BitbitesResponses.deleteMessage);
         System.out.println("  " + food);

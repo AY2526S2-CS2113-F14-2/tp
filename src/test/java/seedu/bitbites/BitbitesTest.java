@@ -886,6 +886,9 @@ class BitbitesTest {
         assertEquals(1, nonConsecutive.getLongestStreak());
     }
 
+    // ── FindCommand ───────────────────────────────────────
+    // TBD @RayminQAQ
+
     // ── GoalsCommand ──────────────────────────────────────
     // @@author bryanyeo3125
     @Test
@@ -1078,3 +1081,8 @@ class BitbitesTest {
         assertTrue(true);
     }
 }
+
+/*
+Bryan: Added some comments in the JUnit code
+ */
+
