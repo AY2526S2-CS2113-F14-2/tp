@@ -115,3 +115,13 @@ Implemented `TipsCommand` which displays tips for estimating calories and protei
 ---
 
 ### Review/Mentoring Contributions
+
+PRs reviewed by me:
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/65
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/57
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/54
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/47
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/37
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/33
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/21
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/16
