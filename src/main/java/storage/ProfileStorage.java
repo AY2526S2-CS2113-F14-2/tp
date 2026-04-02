@@ -76,6 +76,29 @@ public class ProfileStorage {
     }
 
     /**
+     * Loads a profile directly from a given file object.
+     * Used internally by listProfiles() to read each profile file in the data/ directory.
+     * Returns null if the file cannot be parsed or an IO error occurs.
+     *
+     * @param file The profile file to load.
+     * @return The loaded Profile object, or null if loading fails.
+     */
+    private static Profile loadProfile(File file) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String profileName = reader.readLine().split("=")[1];
+            String gender = reader.readLine().split("=")[1];
+            int age = Integer.parseInt(reader.readLine().split("=")[1]);
+            double weight = Double.parseDouble(reader.readLine().split("=")[1]);
+            double height = Double.parseDouble(reader.readLine().split("=")[1]);
+            reader.close();
+            return new Profile(profileName, gender, age, weight, height);
+        } catch (IOException | NumberFormatException e) {
+            return null;
+        }
+    }
+
+    /**
      * Checks whether a profile file exists for the given username.
      *
      * @param name The name of the user to check.
@@ -111,29 +134,6 @@ public class ProfileStorage {
             }
         }
         System.out.println("====================================");
-    }
-
-    /**
-     * Loads a profile directly from a given file object.
-     * Used internally by listProfiles() to read each profile file in the data/ directory.
-     * Returns null if the file cannot be parsed or an IO error occurs.
-     *
-     * @param file The profile file to load.
-     * @return The loaded Profile object, or null if loading fails.
-     */
-    private static Profile loadProfile(File file) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String profileName = reader.readLine().split("=")[1];
-            String gender = reader.readLine().split("=")[1];
-            int age = Integer.parseInt(reader.readLine().split("=")[1]);
-            double weight = Double.parseDouble(reader.readLine().split("=")[1]);
-            double height = Double.parseDouble(reader.readLine().split("=")[1]);
-            reader.close();
-            return new Profile(profileName, gender, age, weight, height);
-        } catch (IOException | NumberFormatException e) {
-            return null;
-        }
     }
 
     /**

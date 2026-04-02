@@ -42,7 +42,7 @@ public class AddCommand extends Command {
     public boolean execute(AppContext context) {
         FoodList foodList = context.getFoodList();
 
-        String correctFormat = BitbitesResponses.addFormatReminder;
+        String correctFormat = BitbitesResponses.ADD_FORMAT_REMINDER;
         logger.log(Level.INFO, "Attempting to add food: " + fullCommand);
 
         // Check that all required prefixes exist
@@ -106,7 +106,7 @@ public class AddCommand extends Command {
             assert foodList.size() > 0 : "FoodList should not be empty after adding";
             logger.log(Level.INFO, "Successfully added food: " + name +
                     " | Calories: " + calories + " | Protein: " + protein);
-            System.out.println(BitbitesResponses.addMessage);
+            System.out.println(BitbitesResponses.ADD_MESSAGE);
             GoalsCommand.showDailyProgress(foodList);
 
         } catch (NumberFormatException e) {
