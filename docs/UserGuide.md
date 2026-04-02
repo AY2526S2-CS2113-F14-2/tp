@@ -126,7 +126,7 @@ Removes a food item from your log by its index number (as shown in `list`).
 
 **Format:** `delete INDEX`
 
-- `INDEX` must be a positive integer corresponding to a listed item.
+- `INDEX` must be a positive and valid integer corresponding to a listed item.
 - After deletion, Bitbites will display your updated progress toward today's daily goals.
 
 **Example:**
@@ -230,7 +230,7 @@ Shows a table of all logged dates with total calories, protein, and a segmented 
 
 **Format:** `history /top N`
 
-Displays the `N` days with the highest total calorie intake, in descending order.
+Displays the `N` days with the highest total calorie intake, ranked in descending order. Useful for identifying your heaviest eating days at a glance.
 
 **Example:**
 ```
@@ -241,7 +241,7 @@ history /top 5
 
 **Format:** `history /best N`
 
-Displays the `N` days whose total calorie intake was closest to your daily calorie goal (regardless of over or under).
+Displays the `N` days whose total calorie intake was closest to your daily calorie goal, whether slightly over or under. This highlights your most consistent days and helps you understand what a well-balanced day looks like for you.
 
 **Example:**
 ```
@@ -252,7 +252,8 @@ history /best 3
 
 **Format:** `history streak`
 
-Shows your current logging streak (consecutive days with at least one food entry) and your all-time longest streak. A streak counts today if you have already logged food today, or yesterday if today has no entries yet.
+Shows your current consecutive logging streak and your all-time longest streak. A streak is maintained as long as you log at least one food entry each day.
+Today counts toward your streak if you have already logged food today; otherwise, yesterday's entry keeps your streak alive until you log today.
 
 ---
 
