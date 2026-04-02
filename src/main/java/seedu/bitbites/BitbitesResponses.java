@@ -73,6 +73,7 @@ public class BitbitesResponses {
             + "  profile clear                           - Clear your profile\n"
             + "  tips                                    - Show tips for estimating calories and protein\n"
             + "  help                                    - Show help message\n"
+            + "  motivate                                - Show a random motivational message\n"
             + "  exit                                    - Exit the application\n"
             + "  (Date format: DD-MM-YYYY)";
     //@@author
