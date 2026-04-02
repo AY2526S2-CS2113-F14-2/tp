@@ -74,6 +74,7 @@ public class BitbitesResponses {
             + "  login                                   - Switch between profiles\n"
             + "  tips                                    - Show tips for estimating calories and protein\n"
             + "  help                                    - Show help message\n"
+            + "  motivate                                - Show a random motivational message\n"
             + "  exit                                    - Exit the application\n"
             + "  (Date format: DD-MM-YYYY)";
     //@@author
