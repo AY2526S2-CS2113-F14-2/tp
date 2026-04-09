@@ -306,6 +306,7 @@ Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` o
 5. If no summaries found, a message is shown and execution stops.
 6. `ui.showSummaryRange()` displays each day's bar scaled to the highest-calorie day.
 
+
 **`summary compare d/DATE1 d/DATE2`:**
 1. The command is split by `d/` — at least 3 parts must exist.
 2. Both dates are extracted and checked for emptiness.
@@ -327,10 +328,6 @@ The `history` feature shows a chronological log of all recorded days. It support
 | `history streak` | Current and longest consecutive recording streak |
 
 #### 11.1 Implementation Details
-
-**`history` and `history /top N`:**
-
-`HistoryCommand` and `HistoryTopCommand` retrieve `NutritionSummary` lists from `FoodList`. Each day's bar in `showHistory()` is scaled relative to the highest-calorie day — the busiest day fills the full bar width and others are proportionally shorter.
 
 **`history`:**
 `HistoryCommand` checks whether any food has been logged today using `LocalDate.now()`. It retrieves all daily summaries and passes them with a `recordedToday` flag to `ui.showHistory()`, which appends a reminder if today has not been logged.
@@ -447,7 +444,8 @@ In short, BitBites is designed for users who are motivated to eat better but nee
 | v1.0    | user                            | view food items for a specific date                        | review what I ate on a particular day                         |
 | v1.0    | clumsy user                     | delete a specific food entry                               | remove items I added by mistake                               |
 | v1.0    | user                            | edit the details of an existing entry                      | correct mistakes without deleting and re-adding               |
-| v2.0    | gym goer                        | track my protein intake per day                            | see how much protein I am consuming                           |
+| v1.0    | gym goer                        | track my protein intake per day                            | see how much protein I am consuming                           |
+| v1.0    | user who forgets to use the app | fill in an entry for a missed meal on an earlier date      | keep the record complete and easy to review                   |
 | v2.0    | user                            | set up my profile with my name                             | have the app feel personalised to me                          |
 | v2.0    | user                            | set a daily calorie and protein goal                       | track my progress against a personal target                   |
 | v2.0    | user                            | view my daily progress after logging a meal                | know how many calories I have left for the day                |
@@ -473,28 +471,32 @@ In short, BitBites is designed for users who are motivated to eat better but nee
 4. **Usability:** A user who has never used the application should be able to log their first meal within 2 minutes of launching it, using only the `help` command as a reference.
 5. **Persistence:** All food entries, goals, and profile data must be saved to disk automatically and restored on the next launch without any user action.
 
-
 ---
 
 ## Appendix D: Glossary
 
-| Term | Definition |
-|------|-----------|
-| **BMI** | Body Mass Index. Calculated as weight (kg) divided by height (m) squared. Used to categorise a user's weight relative to their height. |
-| **BMR** | Basal Metabolic Rate. The number of calories the body needs at rest, calculated using the Mifflin-St Jeor formula based on gender, age, weight, and height. |
-| **Calorie goal** | The daily calorie intake target set by the user, either manually via `goals set` or automatically from the user's BMR via `profile set`. |
-| **Streak** | A count of consecutive days on which at least one food item was logged. The current streak resets to 0 if no food was logged today or yesterday. |
-| **Preset** | A saved food template that can be quickly added to the food list without re-entering all nutritional details. |
-| **DD-MM-YYYY** | The date format used throughout BitBites for all user-facing date input and display (e.g., `01-04-2026`). |
+|## Appendix D: Glossary
 
+| Term                     | Definition                                                                                                                                                                                                                                                             |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Command Pattern**      | A software design pattern where each user action is encapsulated as a separate class with an `execute()` method. Used in BitBites so that `Parser` only creates Command objects, and `Bitbites` calls `execute()` — separating parsing from execution.                 |
+| **AppContext**           | A context object that bundles `FoodList`, `PresetList`, and `UserInterface` into a single parameter passed to every command's `execute()` method. Follows the Context Object pattern to avoid updating every command's method signature when new components are added. |
+| **NutritionSummary**     | A data class that stores aggregated nutritional data (total calories, total protein, item count, food item list) for a given date or date range. Computed by `FoodList` and passed to `UserInterface` for display.                                                     |
+| **ProgressBar**          | A utility class that generates segmented ASCII bars where each segment represents one meal's calorie proportion. Bar width is scaled relative to a maximum value for cross-day trend comparisons.                                                                      |
+| **BitbitesException**    | A custom `RuntimeException` used throughout the application to signal user-facing errors. Caught in the main loop and displayed via `ui.showError()`.                                                                                                                  |
+| **BMR**                  | Basal Metabolic Rate. Computed in the `Profile` model using the Mifflin-St Jeor formula. Used by `GoalsCommand.autoSetGoalsFromBmr()` to automatically set the user's daily calorie goal.                                                                              |
+| **BMI**                  | Body Mass Index. Computed in the `Profile` model as `weight / (height in metres)²`. Categorised into Underweight, Normal, Overweight, or Obese using standard thresholds.                                                                                              |
+| **Streak**               | A count of consecutive days with at least one logged food entry. Computed in `FoodList.getCurrentStreak()` and `getLongestStreak()` using `LocalDate` comparisons. The current streak returns 0 if the most recent entry is not from today or yesterday.               |
+| **Preset**               | A `Food` object stored in `PresetList` with date set to `"PRESET"`. Used as a template by `PresetCommand` to quickly log a food entry without re-entering nutritional details.                                                                                         |
+| **Storage**              | The `Storage` class in the `storage` package handles reading and writing of food logs and presets to plain-text files. Each line follows the format `NAME \| CALORIES \| PROTEIN \| DATE`.                                                                             |
+| **Per-user file naming** | Profile and goals files are named using a lowercase version of the username with spaces replaced by underscores (e.g., `john_doe_profile.txt`). This allows multiple users to coexist on the same system.                                                              |
 
 ---
 
 ## Appendix E: Instructions for Manual Testing
 
 The following instructions guide a tester through the main features of BitBites.
-This is not an exhaustive list — testers are encouraged to explore edge cases and
-variations beyond what is described here.
+This is not an exhaustive list — testers are encouraged to explore edge cases and variations beyond what is described here.
 
 ### E.1 Initial Launch
 
@@ -503,6 +505,7 @@ variations beyond what is described here.
 3. Enter any name when prompted (e.g., `James`).
 4. Verify that the application starts cleanly with no food items loaded.
 5. Run `list` and verify the list is empty.
+
 
 ### E.2 Testing Basic Food Logging (v1.0)
 
@@ -537,14 +540,14 @@ Verify: All three items are shown with 1-based indices.
 Verify: First command shows only the two items on that date.
 Second command shows no results.
 
+
 ### E.3 Testing Delete (v1.0)
 
 1. Delete an item:
 ```
    delete 1
 ```
-Verify: Confirmation is shown. `list` reflects the removal. Daily progress
-summary is updated.
+Verify: Confirmation is shown. `list` reflects the removal. Daily progress summary is updated.
 
 2. Delete with an invalid index:
 ```
@@ -553,6 +556,7 @@ summary is updated.
    delete
 ```
 Verify: Each produces an appropriate error message.
+
 
 ### E.4 Testing Edit (v2.0)
 
@@ -574,6 +578,7 @@ Verify: Calories and protein are updated. Name and date are unchanged.
 ```
 Verify: Error message is shown. No item is modified.
 
+
 ### E.5 Testing Goals (v2.0)
 
 1. View default goals:
@@ -584,7 +589,7 @@ Verify: Default daily goal of 2000 kcal and 50.0g protein is shown.
 
 2. Set new goals:
 ```
-   goals set dc/2500 dp/60
+   goals set dc/2500 dp/60 wc/17500 wp/420
 ```
 Verify: Updated goals are confirmed.
 
@@ -600,14 +605,14 @@ Verify: Progress is shown against the new targets.
 ```
 Verify: Error message is shown. Goal is not updated.
 
+
 ### E.6 Testing Profile (v2.0)
 
 1. Set a profile:
 ```
    profile set n/James g/male a/25 w/70 h/175
 ```
-Verify: Profile is displayed with BMI and BMR values. Daily and weekly
-calorie goals are automatically updated to reflect the BMR.
+Verify: Profile is displayed with BMI and BMR values. Daily and weekly calorie goals are automatically updated to reflect the BMR.
 
 2. View the profile:
 ```
@@ -633,14 +638,14 @@ Verify: Error message is shown. Profile is not updated.
 ```
 Verify: Profile is deleted. Running `profile` shows the setup prompt.
 
+
 ### E.7 Testing Summary Commands (v2.0)
 
 1. Summary for a specific date:
 ```
    summary d/01-04-2026
 ```
-Verify: Total calories and protein shown. Per-item percentage breakdown
-displayed. Goal status shown (remaining or reached).
+Verify: Total calories and protein shown. Per-item percentage breakdown displayed. Goal status shown (remaining or reached).
 
 2. Summary for a date with no data:
 ```
@@ -652,14 +657,13 @@ Verify: "No food items found" message is shown.
 ```
    summary from/01-04-2026 to/02-04-2026
 ```
-Verify: Both dates shown with bars. Days within 20% of calorie goal
-are marked with `✓`.
+Verify: Both dates shown with bars. Days within 20% of calorie goal are marked with `GOAL reached!`.
 
 4. Summary range with start after end:
 ```
    summary from/02-04-2026 to/01-04-2026
 ```
-Verify: Error message is shown.
+Verify: Error message is shown. Start date must not be after end date.
 
 5. Compare two dates:
 ```
@@ -672,6 +676,7 @@ Verify: Both days shown side by side with calorie and protein differences.
    summary compare d/01-04-2026 d/05-04-2026
 ```
 Verify: "No food items found" message for the empty date.
+
 
 ### E.8 Testing History Commands (v2.0)
 
@@ -714,31 +719,134 @@ Verify: Each produces an appropriate error message.
 ```
    history streak
 ```
-Verify: Current streak shown as 1 (since 31-03 is the last entry and
-there is a gap before it). Longest streak shown as 3 (27-03 to 29-03).
+Verify: Longest streak shown as 3 (27-03 to 29-03).
 
-### E.9 Testing Data Persistence
 
-1. Add a food item, then exit:
+### E.9 Testing Find Command (v2.0)
+
+1. Find an existing food item:
 ```
-   add n/Apple c/95 p/0.5 d/01-04-2026
-   exit
+find Soup
 ```
+Verify: All entries with the exact name "Soup" are shown with calories and protein.
 
-2. Relaunch the application with the same name.
+2. Find a name that does not exist:
+```
+find Pizza
+```
+Verify: "No food items found" message is shown.
 
-3. Run `list`.
-   Verify: The apple entry is still present. Goals and profile are also
-   restored from the previous session.
 
-### E.10 Testing Help and Tips
+### E.10 Testing Preset Commands (v2.0)
+
+1. Add a preset:
+```
+preset add n/Protein Shake c/200 p/30
+```
+Verify: Confirmation shown. Preset saved with name, calories, and protein.
+
+2. Add a preset with missing fields:
+```
+preset add n/Oats c/150
+```
+Verify: Error message shown. Preset is not added.
+
+3. Add a preset with invalid values:
+```
+preset add n/Oats c/-50 p/5.0
+```
+Verify: Error message shown. Preset is not added.
+
+4. List presets:
+```
+preset list
+```
+Verify: All saved presets shown with 1-based indices.
+
+5. Use a preset with today's date:
+```
+preset use 1
+```
+Verify: Food entry added to the list with today's date. Running `list` shows the new entry.
+
+6. Use a preset with a custom date:
+```
+preset use 1 d/15-04-2026
+```
+Verify: Food entry added with the specified date `15-04-2026`.
+
+7. Use a preset with an invalid date format:
+```
+preset use 1 d/2026/04/15
+```
+Verify: Error message shown. No entry added.
+
+8. Delete a preset:
+```
+preset delete 1
+```
+Verify: Preset removed. Running `preset list` reflects the change.
+
+9. Delete a preset with an invalid index:
+```
+preset delete 99
+preset delete abc
+```
+Verify: Each produces an appropriate error message.
+
+10. Use a preset on an empty preset list:
+```
+preset use 1
+```
+(Run this after deleting all presets.)
+Verify: Error message shown indicating no presets are saved.
+
+
+### E.11 Testing Login Command (v2.0)
+
+1. Switch to a new user:
+```
+login
+```
+Enter a name that has no existing profile (e.g., `Alice`).
+Verify: Welcome message shown for new user. Prompt to set up a profile is displayed.
+
+2. Switch to a returning user:
+```
+login
+```
+Enter a name that has an existing profile (e.g., `James`, after completing E.6).
+Verify: "Welcome back" message shown. Profile summary (BMI, BMR) is displayed.
+
+3. Goals are loaded for the new user:
+   After logging in as `Alice`, run:
+```
+goals
+```
+Verify: Goals shown reflect Alice's saved goals (or defaults if none saved).
+
+4. Login with an empty name:
+```
+login
+```
+Press Enter without typing a name.
+Verify: Error message shown. Session is not switched.
+
+5. Verify user isolation:
+- Log in as `James` and add a food item.
+- Log in as `Alice` and run `list`.
+  Verify: Note that food logs are currently shared across users (this is a known limitation).
+
+
+### E.12 Testing Help, Tips and Motivate
 ```
 help
 tips
+motivate
 exit
 ```
 
 Verify: `help` lists all available commands with their formats.
-`tips` shows calorie and protein reference data for common foods and
-Singaporean meals.
+`tips` shows calorie and protein reference data for common foods and Singaporean meals.
+`motivate` shows a random motivational message.
 `exit` shows a farewell message and closes the application.
