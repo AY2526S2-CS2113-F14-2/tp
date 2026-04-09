@@ -22,6 +22,7 @@ My contributions focused on drafting the whole BitBites system including the hig
 ### Contributions to the User Guide
 - Section: Motivational Quotes `motivate`
 - Section: Exiting the Application `exit`
+- Section: Finding Food Items `find`
 ---
 
 ### Contributions to the Developer Guide
