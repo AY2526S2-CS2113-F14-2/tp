@@ -340,6 +340,8 @@ The `history` feature shows a chronological log of all recorded days. It support
 **`history`:**
 `HistoryCommand` checks whether any food has been logged today using `LocalDate.now()`. It retrieves all daily summaries and passes them with a `recordedToday` flag to `ui.showHistory()`, which appends a reminder if today has not been logged.
 
+![history sequence diagram](uml/history.png)
+
 **`history /top N`:**
 `HistoryTopCommand` splits the command by `/top` to extract `N`. It calls `foodList.getTopDaysByCalories(N)` which sorts summaries by total calories descending and returns the top N.
 
