@@ -1,20 +1,19 @@
-@startuml history_best
+@startuml history_top
 skinparam arrowThickness 1.1
 skinparam maxMessageSize 150
 
 participant ":Bitbites" as Bitbites
 participant ":Parser" as Parser
-participant "c:HistoryBestCommand" as Cmd
+participant "c:HistoryTopCommand" as Cmd
 participant "foods:FoodList" as FoodList
-participant "goals:GoalsCommand" as Goals
 participant "ui:UserInterface" as UI
 
--> Bitbites : "history /best 3"
+-> Bitbites : "history /top 3"
 activate Bitbites
 
-Bitbites -> Parser : parse("history /best 3")
+Bitbites -> Parser : parse("history /top 3")
 activate Parser
-Parser --> Bitbites : HistoryBestCommand
+Parser --> Bitbites : HistoryTopCommand
 deactivate Parser
 
 Bitbites -> Cmd : execute(context)
@@ -25,22 +24,12 @@ alt N missing or non-numeric
 else N <= 0
     Cmd --> Bitbites : throws BitbitesException
 else valid N
-    Cmd -> Goals : getDailyCalorieGoal()
-    activate Goals
-    Goals --> Cmd : int
-    deactivate Goals
-
-    Cmd -> Goals : getDailyProteinGoal()
-    activate Goals
-    Goals --> Cmd : double
-    deactivate Goals
-
-    Cmd -> FoodList : getDaysClosestToGoal(3, calorieGoal)
+    Cmd -> FoodList : getTopDaysByCalories(3)
     activate FoodList
     FoodList --> Cmd : List<NutritionSummary>
     deactivate FoodList
 
-    Cmd -> UI : showHistoryBest(best, 3, calorieGoal, proteinGoal)
+    Cmd -> UI : showHistoryTop(top, 3)
     activate UI
     UI --> Cmd
     deactivate UI

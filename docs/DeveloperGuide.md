@@ -296,7 +296,7 @@ Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` o
 3. Goal values are retrieved from `GoalsCommand.getDailyCalorieGoal()` and `getDailyProteinGoal()`.
 4. `ui.showSummary(summary, calorieGoal, proteinGoal)` prints the breakdown and goal status.
 
-![summary by date sequence diagram](uml/summaryByDate.png)
+![summary by date sequence diagram](uml/summary_date.png)
 
 **`summary from/DATE1 to/DATE2`:**
 1. Both `from/` and `to/` prefixes must be present.
@@ -306,6 +306,7 @@ Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` o
 5. If no summaries found, a message is shown and execution stops.
 6. `ui.showSummaryRange()` displays each day's bar scaled to the highest-calorie day.
 
+![summary by range sequence diagram](uml/summary_range.png)
 
 **`summary compare d/DATE1 d/DATE2`:**
 1. The command is split by `d/` — at least 3 parts must exist.
@@ -313,6 +314,8 @@ Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` o
 3. If either date has no items, a message is shown and execution stops early.
 4. `FoodList.getSummaryByDate()` is called for each date.
 5. `ui.showSummaryCompare()` displays both days side by side with calorie and protein differences.
+
+![summary compare sequence diagram](uml/summary_compare.png)
 
 ---
 
@@ -335,13 +338,17 @@ The `history` feature shows a chronological log of all recorded days. It support
 **`history /top N`:**
 `HistoryTopCommand` splits the command by `/top` to extract `N`. It calls `foodList.getTopDaysByCalories(N)` which sorts summaries by total calories descending and returns the top N.
 
+![history top sequence diagram](uml/history_top.png)
+
 **`history /best N`:**
 `HistoryBestCommand` calls `foodList.getDaysClosestToGoal(n, calorieGoal)`, which sorts summaries by `|totalCalories - dailyCalorieGoal|` ascending, surfacing the days where intake was closest to the user's target.
+
+![history best sequence diagram](uml/history_best.png)
 
 **`history streak`:**
 `HistoryStreakCommand` calls `getCurrentStreak()` and `getLongestStreak()`. Streak calculation uses `LocalDate.parse()` with `dd-MM-yyyy` format to compare consecutive dates. `getCurrentStreak()` also checks whether the last recorded date is today or yesterday using `LocalDate.now()` — if neither, the streak returns 0.
 
-![history streak sequence diagram](uml/historyStreak.png)
+![history streak sequence diagram](uml/history_streak.png)
 
 ---
 
