@@ -65,7 +65,7 @@ public class BitbitesResponses {
             + "  summary compare d/DATE1 d/DATE2         - Compare two days\n"
             + "  history                                 - Show all food history\n"
             + "  history /top N                          - Show top N highest calorie days\n"
-            + "  history /best N                         - Show top N lowest calorie days\n"
+            + "  history /best N                         - Show top N calorie closest to goal days\n"
             + "  history streak                          - Show tracking streak\n"
             + "  profile                                 - View your profile, BMI and BMR\n"
             + "  profile set n/NAME a/AGE w/WEIGHT h/HEIGHT - Set up your profile\n"
