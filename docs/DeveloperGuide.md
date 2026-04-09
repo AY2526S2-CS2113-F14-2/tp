@@ -155,34 +155,113 @@ The feature is implemented in `DeleteCommand`, following the Command Pattern. `P
 
 ### 6. Exiting the Application `exit`
 
-The `exit` feature allows users to terminate the application safely when they are done. It is implemented as a direct command branch in `Parser.parse(...)` and integrates with the main application loop in `Bitbites`.
+The `exit` feature allows users to terminate the application safely when they are done. It is implemented as a direct command branch in `Parser.parse(...)` and returns a command that signals the application loop to stop.
+
+**Format:** `exit`
 
 #### 6.1 Implementation Details
 
+The feature is implemented in `ExitCommand`, following the Command Pattern.
+
+**Executing `exit`:**
+
 When the user inputs `exit`, the following execution flow occurs:
 
-1. **Command Matching:** `Parser.parse(...)` checks whether the trimmed input is exactly `exit`.
-2. **User Feedback:** The parser invokes `ui.showExit()` to display a farewell message.
+1. **Command Parsing:** `Parser.parse(...)` checks whether the trimmed input exactly matches `"exit"`. If it does, it creates and returns an `ExitCommand` instance.
+2. **Logger:** Before returning, the parser logs the exit request at `Level.INFO` and `Level.FINE` for auditing purposes.
+3. **Execution:** `ExitCommand.execute(context)` is invoked by the main application loop in `Bitbites.run()`.
+4. **User Feedback:** `ui.showExit()` is called to print a farewell message retrieving `BitbitesResponses.EXIT_MESSAGE`, which displays "Bye. Hope to see you again soon!".
+5. **Signal Return:** The command returns `true` to the main loop, which signals the application to terminate gracefully and exit the loop.
+6. **Persistence:** Any pending data that has not been persisted to disk is written by the main loop's final save operations before the application closes.
+
+#### 6.2 Integration with Main Loop
+
+The main application loop in `Bitbites.run()` continues processing commands until a command returns `true`. When `ExitCommand` returns `true`, the loop breaks and the application terminates normally:
+
+```java
+while (true) {
+    Command command = Parser.parse(userInput);
+    boolean shouldExit = command.execute(context);
+    if (shouldExit) {
+        break; // Application stops
+    }
+}
+```
 
 ---
 
-### 7. Help Command `help`
+### 7. Motivational Messages `motivate`
+
+The `motivate` feature provides personalized motivational messages and encouragement to users. This feature is designed to keep users engaged and motivated to maintain healthy eating habits.
+
+**Format:** `motivate`
+
+#### 7.1 Implementation Details
+
+The feature is implemented in `MotivateCommand.java` with support for different motivation types (currently only random is active).
+
+**Executing `motivate`:**
+
+When the user inputs `motivate`, the following execution flow occurs:
+
+1. **Command Parsing:** `Parser.parse(...)` checks whether the input starts with `"motivate"`. If it matches, it creates a `MotivateCommand` instance with the full command string.
+2. **Logger:** The parser logs the motivate command request at multiple log levels for debugging and auditing (`Level.CONFIG` and `Level.FINE`).
+3. **Command Execution:** `MotivateCommand.execute(context)` is invoked:
+   - **Context Retrieval:** The command retrieves `FoodList`, `UserInterface`, and the current user name from the context.
+   - **Motivation Type Extraction:** `extractMotivationType(fullCommand)` parses the command to determine the type (currently supports "random", with "progress" and "goals" commented out for future expansion).
+   - **Date Extraction (Future Use):** `extractDate(fullCommand)` parses any optional date parameter `d/DATE` for potential future features.
+4. **Message Display:** Based on the motivation type:
+   - **Random Motivation:** Calls `showRandomMotivation()`, which:
+     - Selects a random message from `BitbitesResponses.MOTIVATION_RANDOM_MESSAGES` (array of 15+ encouraging messages).
+     - Prints the selected message to the console with surrounding newlines for visibility.
+5. **Return Value:** The command always returns `false`, signaling the application to continue running (this is never an exit condition).
+
+#### 7.2 Supported Motivation Types
+
+Currently, only the **random** type is implemented:
+
+| Type | Behaviour | Status |
+|------|-----------|--------|
+| `random` | Displays a random motivational message from a predefined list | ✓ Active |
+| `progress` | Would display motivation based on today's daily goal progress | Commented out |
+| `goals` | Would display motivation based on overall goal achievement | Commented out |
+
+#### 7.3 Message Pool
+
+The `BitbitesResponses.MOTIVATION_RANDOM_MESSAGES` array contains 15 motivational messages including:
+- "Every small step counts towards your health goals! Keep going"
+- "Progress, not perfection. You're on the right track!"
+- "Every meal logged is a victory. Keep it up!"
+- And 12 additional variations
+
+Messages are randomly selected using `new Random().nextInt(randomMessages.length)`.
+
+#### 7.4 Future Extensibility
+
+The `extractMotivationType()` and `extractDate()` methods are designed to support future expansion:
+- Conditional motivation based on the user's progress toward goals
+- Date-specific motivation for past achievements
+- Fetching nutritional summaries via `getSummaryForDate(foodList, date)` (helper method already present)
+
+---
+
+### 8. Help Command `help`
 
 The `help` command displays a summary of all available commands and their formats.
 
 **Format:** `help`
 
-#### 7.1 Implementation Details
+#### 8.1 Implementation Details
 
 `HelpCommand.execute()` delegates entirely to `ui.showHelp()`, which prints `BitbitesResponses.helpMessage`. No data access or modification occurs.
 
 ---
 
-### 8. Managing User Profiles `profile`
+### 9. Managing User Profiles `profile`
 
 The `profile` feature allows each user to store and retrieve their personal physical attributes. It integrates with the `goals` feature to automatically set sensible calorie targets when a profile is saved.
 
-#### 8.1 Implementation Details
+#### 9.1 Implementation Details
 
 The feature spans three classes: `ProfileCommand` (command logic), `Profile` (data model), and `ProfileStorage` (disk persistence).
 
@@ -209,7 +288,7 @@ The sequence diagram below illustrates the execution of `profile set ...`:
 
 ![profile set sequence diagram](uml/profile_set.png)
 
-#### 8.2 The `Profile` Model
+#### 9.2 The `Profile` Model
 
 `Profile` stores five fields: `name`, `gender`, `age`, `weight` (kg), and `height` (cm). It derives two computed values:
 
@@ -222,11 +301,11 @@ BMI is also categorised into `Underweight`, `Normal`, `Overweight`, or `Obese` b
 
 ---
 
-### 9. Managing Nutritional Goals `goals`
+### 10. Managing Nutritional Goals `goals`
 
 The `goals` feature allows users to set daily and weekly calorie and protein targets, and view their current progress against those targets. Goals are persisted per user and are automatically set when a profile is saved.
 
-#### 9.1 Implementation Details
+#### 10.1 Implementation Details
 
 The feature is driven by `GoalsCommand.java`, with persistence handled by `GoalsStorage.java`.
 
@@ -274,7 +353,7 @@ The sequence diagram below illustrates the execution of `goals set ...`:
 
 ---
 
-### 10. Summary Commands `summary`
+### 11. Summary Commands `summary`
 
 The `summary` feature provides nutritional breakdowns for logged food items. It supports three sub-commands.
 
@@ -284,7 +363,7 @@ The `summary` feature provides nutritional breakdowns for logged food items. It 
 | `summary from/DATE1 to/DATE2` | Trend across a date range |
 | `summary compare d/DATE1 d/DATE2` | Comparison of two days |
 
-#### 10.1 Implementation Details
+#### 11.1 Implementation Details
 
 Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` objects from `FoodList` and pass them to `UserInterface`.
 
@@ -315,7 +394,7 @@ Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` o
 
 ---
 
-### 11. History Commands `history`
+### 12. History Commands `history`
 
 The `history` feature shows a chronological log of all recorded days. It supports four sub-commands.
 
@@ -326,7 +405,7 @@ The `history` feature shows a chronological log of all recorded days. It support
 | `history /best N` | Top N days closest to daily calorie goal |
 | `history streak` | Current and longest consecutive recording streak |
 
-#### 11.1 Implementation Details
+#### 12.1 Implementation Details
 
 **`history` and `history /top N`:**
 
@@ -348,11 +427,11 @@ The `history` feature shows a chronological log of all recorded days. It support
 
 ---
 
-### 12. Storage Components
+### 13. Storage Components
 
 BitBites uses two independent storage classes — `ProfileStorage` and `GoalsStorage` — both located in the `storage` package. Each class reads and writes plain-text key-value files stored in the `data/` directory.
 
-#### 12.1 File Naming Convention
+#### 13.1 File Naming Convention
 
 Both storage classes derive a safe filename from the user's name by converting it to lowercase and replacing spaces with underscores:
 
@@ -363,7 +442,7 @@ data/<safeName>_goals.txt
 
 For example, a user named `"John Doe"` produces the files `data/john_doe_profile.txt` and `data/john_doe_goals.txt`. This allows multiple users to maintain independent data on the same system.
 
-#### 12.2 File Formats
+#### 13.2 File Formats
 
 **Profile file** (`<n>_profile.txt`):
 ```
@@ -384,11 +463,11 @@ weeklyProtein=VALUE
 
 Both files are read line-by-line in a fixed order. Each line is split on the `=` character and the second element is parsed into the appropriate type (`int`, `double`, or `String`).
 
-#### 12.3 Error Handling
+#### 13.3 Error Handling
 
 Both `loadProfile()` and `loadGoals()` return `null` if the file does not exist or if any line fails to parse (caught via `IOException` or `NumberFormatException`). Callers treat a `null` return as "no saved data" and fall back to defaults. This means a corrupted or missing file degrades gracefully without crashing the application.
 
-#### 12.4 Key Public Methods
+#### 13.4 Key Public Methods
 
 | Class | Method | Description |
 |---|---|---|

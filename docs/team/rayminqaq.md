@@ -5,7 +5,7 @@
 BitBites is a command-line food tracking chatbot that helps users log daily meals, monitor nutritional intake, and track progress against personal health goals.
 It is written in Java and targets users who prefer fast, keyboard-driven interfaces over graphical applications.
 
-My contributions focused on drafting the whole BitBites system including the high level OOP structure (see the github pull request: ), and implement serveral command such as: `exit`, `login`, `motivate`.
+My contributions focused on drafting the whole BitBites system including the high level OOP structure (see the github pull request: ), and implement serveral command such as: `exit`, `login`, `motivate`, `find`.
 
 ---
 
