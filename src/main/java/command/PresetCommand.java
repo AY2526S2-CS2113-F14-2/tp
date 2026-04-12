@@ -2,6 +2,8 @@ package command;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -147,8 +149,17 @@ public class PresetCommand extends Command {
 
             if (useParts.length > 1 && useParts[1].contains("d/")) {
                 dateToUse = extractField(useParts[1], "d/");
+
                 if (!dateToUse.matches("\\d{2}-\\d{2}-\\d{4}")) {
                     throw new BitbitesException("Custom date must be in DD-MM-YYYY format.");
+                }
+
+                try {
+                    DateTimeFormatter strictFormatter = DateTimeFormatter.ofPattern("dd-MM-uuuu")
+                            .withResolverStyle(ResolverStyle.STRICT);
+                    LocalDate.parse(dateToUse, strictFormatter);
+                } catch (DateTimeParseException e) {
+                    throw new BitbitesException("Custom date must be a valid calendar date.");
                 }
             }
 
