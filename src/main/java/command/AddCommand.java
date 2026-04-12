@@ -112,8 +112,12 @@ public class AddCommand extends Command {
             }
 
             // Ensures date is a real calendar date (e.g. rejects 32-13-2026)
+            java.time.format.DateTimeFormatter strictFormatter = java.time.format.DateTimeFormatter
+                    .ofPattern("dd-MM-uuuu")
+                    .withResolverStyle(java.time.format.ResolverStyle.STRICT);
+
             try {
-                java.time.LocalDate.parse(date, java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                java.time.LocalDate.parse(date, strictFormatter);
             } catch (java.time.format.DateTimeParseException e) {
                 System.out.println("Invalid date: " + date + ". Please enter a real date in DD-MM-YYYY format.");
                 return false;
