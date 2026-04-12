@@ -84,7 +84,7 @@ public class PresetCommand extends Command {
         }
 
         if (args.contains("d/")) {
-            throw new BitbitesException("Preset templates do not take a date field. Format: preset add n/NAME c/CALORIES p/PROTEIN");
+            throw new BitbitesException("Preset templates do not take a date field.");
         }
 
         try {
