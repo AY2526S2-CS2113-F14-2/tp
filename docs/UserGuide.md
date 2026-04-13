@@ -395,17 +395,6 @@ profile set n/Alice g/female a/25 w/55 h/165
 
 Displays all profiles saved on this system, with each user's name, BMI, and BMR.
 
-#### Switching to another profile
-
-**Format:** `profile switch NAME`
-
-Switches the current session to the profile saved under `NAME`. The name must exactly match an existing profile.
-
-**Example:**
-```
-profile switch Bob
-```
-
 #### Clearing your profile
 
 **Format:** `profile clear`
@@ -507,7 +496,7 @@ Data is saved after every successfully executed command. Only changes made in a 
 
 ## Known Issues
 
-- The food log and presets are shared across all users on the same system. Switching profiles via `login` or `profile switch` does not load a different food log for that user.
+- The food log and presets are shared across all users on the same system. Switching profiles via `login` does not load a different food log for that user.
 - `find` performs exact name matching only. Searching for a partial name (e.g., `find Chicken`) will not match `Chicken Rice`.
 - The weekly goal progress in `goals` is calculated based on the current calendar week (Monday to Sunday). Entries from the previous week are not included even if they are recent.
 
