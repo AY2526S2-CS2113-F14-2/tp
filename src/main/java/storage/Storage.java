@@ -68,10 +68,20 @@ public class Storage {
 
                 if (parts.length == 4) {
                     String name = parts[0].trim();
-                    int calories = Integer.parseInt(parts[1].trim());
-                    double protein = Double.parseDouble(parts[2].trim());
-                    String date = parts[3].trim();
-                    loadedFoods.add(new Food(name, calories, protein, date));
+                    String dateStr = parts[3].trim();
+
+                    if (!dateStr.matches("\\d{2}-\\d{2}-\\d{4}")) {
+                        logger.log(Level.WARNING, "Skipping entry with invalid date: " + line);
+                        continue;
+                    }
+
+                    try {
+                        int calories = Integer.parseInt(parts[1].trim());
+                        double protein = Double.parseDouble(parts[2].trim());
+                        loadedFoods.add(new Food(name, calories, protein, dateStr));
+                    } catch (NumberFormatException e) {
+                        logger.log(Level.WARNING, "Skipping entry with invalid numbers: " + line);
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
