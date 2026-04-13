@@ -62,7 +62,25 @@ public class Bitbites {
     //@@author rayminQAQ
     public void run() {
         ui.showWelcome();
-        GoalsCommand.loadGoalsIfNeeded(ui.getCurrentUser());
+        String username = ui.getCurrentUser();
+        GoalsCommand.loadGoalsIfNeeded(username);
+
+        // Load per-user food and preset lists on startup
+        foodStorage = Storage.forUser(username);
+        presetStorage = Storage.forUserPresets(username);
+        try {
+            foods = new FoodList(foodStorage.load());
+        } catch (BitbitesException | java.io.FileNotFoundException e) {
+            ui.showError("Could not load food data: " + e.getMessage());
+            foods = new FoodList();
+        }
+        try {
+            presets = new PresetList(presetStorage.load());
+        } catch (BitbitesException | java.io.FileNotFoundException e) {
+            ui.showError("Could not load presets: " + e.getMessage());
+            presets = new PresetList();
+        }
+
         boolean isExit = false;
         AppContext context = new AppContext(foods, presets, ui);
 
@@ -72,8 +90,8 @@ public class Bitbites {
                 Command command = Parser.parse(fullCommand);
 
                 isExit = command.execute(context);
-                foodStorage.save(foods);
-                presetStorage.save(presets);
+                Storage.forUser(ui.getCurrentUser()).save(context.getFoodList());
+                Storage.forUserPresets(ui.getCurrentUser()).save(context.getPresetList());
             } catch (BitbitesException e) {
                 ui.showError(e.getMessage());
             }
