@@ -1,18 +1,24 @@
 # BitBites Developer Guide
 
 ## Table of Contents
-1. [Acknowledgements](#acknowledgements)
-2. [Setting Up, Getting Started](#setting-up-getting-started)
-3. [Design & Implementation](#design--implementation)
-  - 3.1 [Architecture Overview](#architecture-overview)
-  - 3.2 [Command Pattern and AppContext](#1-design-command-pattern-and-appcontext)
-  - 3.3 [List Command](#2-listing-food-items-list)
-  - 3.4 [Add Command](#3-adding-a-food-item-add)
-  - 3.5 [Edit Command](#4-editing-a-food-item-edit)
-  - 3.6 [Delete Command](#5-deleting-a-food-item-delete)
-  - 3.7 [Exit Command](#6-exiting-the-application-exit)
-  - 3.8 [Help Command](#7-help-command-help)
-    *(continue for all remaining features)*
+1. [Acknowledgements](#1-acknowledgements)
+2. [Setting Up, Getting Started](#2-setting-up-getting-started)
+3. [Design & Implementation](#3-design--implementation)
+  - 3.1 [Architecture Overview](#31-architecture-overview)
+  - 3.2 [Command Pattern and AppContext](#32-design-command-pattern-and-appcontext)
+  - 3.3 [Listing Food Items `list`](#33-listing-food-items-list)
+  - 3.4 [Adding a Food Item `add`](#34-adding-a-food-item-add)
+  - 3.5 [Editing a Food Item `edit`](#35-editing-a-food-item-edit)
+  - 3.6 [Deleting a Food Item `delete`](#36-deleting-a-food-item-delete)
+  - 3.7 [Exiting the Application `exit`](#37-exiting-the-application-exit)
+  - 3.8 [Help Command `help`](#38-help-command-help)
+  - 3.9 [Motivational Messages `motivate`](#39-motivational-messages-motivate)
+  - 3.10 [Finding Food Items `find`](#310-finding-food-items-find)
+  - 3.11 [Managing User Profiles `profile`](#311-managing-user-profiles-profile)
+  - 3.12 [Managing Nutritional Goals `goals`](#312-managing-nutritional-goals-goals)
+  - 3.13 [Summary Commands `summary`](#313-summary-commands-summary)
+  - 3.14 [History Commands `history`](#314-history-commands-history)
+  - 3.15 [Storage Components](#315-storage-components))
 4. [Appendix A: Product Scope](#appendix-a-product-scope)
 5. [Appendix B: User Stories](#appendix-b-user-stories)
 6. [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
@@ -21,7 +27,7 @@
 
 ---
 
-## Acknowledgements
+## 1. Acknowledgements
 
 The following resources, libraries, and tools were instrumental in the development of this project:
 - **Java Standard Library**: Used as the foundational framework for core logic, data structures,
@@ -36,9 +42,37 @@ The following resources, libraries, and tools were instrumental in the developme
 
 ---
 
-## Design & Implementation
+## 2. Setting Up, Getting Started
 
-### Architecture Overview
+### Prerequisites
+
+Before setting up BitBites, ensure you have the following installed:
+- **JDK 17** (or later): Required to compile and run the application.
+- **Git**: Required to clone the repository.
+
+### Setup Instructions
+
+Clone the BitBites repository to your local machine:
+
+```bash
+git clone https://github.com/AY2526S2-CS2113-F14-2/tp.git
+cd tp
+```
+
+1. Download the latest `bitbites.jar` file from the milestone releases page.
+2. Open a terminal and navigate to the directory where you downloaded the JAR file.
+3. Run the application using:
+   ```bash
+   java -jar bitbites.jar
+   ```
+
+Upon first launch, the application will prompt you to enter your name. This personalizes your session and is used to identify your profile and goals data.
+
+---
+
+## 3. Design & Implementation
+
+### 3.1 Architecture Overview
 
 BitBites follows a simple layered architecture. The diagram below gives a high-level view
 of the main components and how they interact.
@@ -69,51 +103,11 @@ The main components are:
 
 ---
 
-## Setting Up, Getting Started
-
-### Prerequisites
-
-Before setting up BitBites, ensure you have the following installed:
-- **JDK 17** (or later): Required to compile and run the application.
-- **Git**: Required to clone the repository.
-
-### Setup Instructions
-
-#### 1. Cloning the Repository
-
-Clone the BitBites repository to your local machine:
-
-```bash
-git clone https://github.com/AY2526S2-CS2113-F14-2/tp.git
-cd tp
-```
-
-#### 2. Downloading and Running BitBites
-
-1. Download the latest `bitbites.jar` file from the milestone releases page.
-2. Open a terminal and navigate to the directory where you downloaded the JAR file.
-3. Run the application using:
-   ```bash
-   java -jar bitbites.jar
-   ```
-
-#### 3. First Launch
-
-Upon first launch, the application will prompt you to enter your name. This personalizes your session and is used to identify your profile and goals data.
-
----
-
-## Design & Implementation
-
-{Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
-
----
-
-### 1. Design: Command Pattern and AppContext
+### 3.2 Design: Command Pattern and AppContext
 
 BitBites uses the **Command design pattern** to encapsulate each user action as a discrete object. This makes it straightforward to add new features without modifying existing parsing or execution logic.
 
-#### 1.1 The `Command` Abstract Class
+#### 3.2.1 The `Command` Abstract Class
 
 All executable actions extend the abstract `Command` class in `command/Command.java`. Each subclass must implement:
 
@@ -134,7 +128,7 @@ The class diagram below shows the relationship between `Command` and its concret
 
 ![Command class diagram](uml/command_class.png)
 
-#### 1.2 The `AppContext` Class
+#### 3.2.2 The `AppContext` Class
 
 Rather than passing `FoodList`, `PresetList`, and `UserInterface` as separate parameters to every command, BitBites wraps them in a single `AppContext` object (following the **Context Object pattern**). This means:
 
@@ -152,13 +146,13 @@ UserInterface ui = context.getUi();
 
 ---
 
-### 2. Listing Food Items `list`
+### 3.3 Listing Food Items `list`
 
 The `list` feature provides users with the ability to view their logged food items. It is implemented with two primary execution paths to handle different user needs:
 1. **List All:** Displays the entire history of logged food items.
 2. **List by Date:** Filters and displays only the food items consumed on a specified date.
 
-#### 2.1 Implementation Details
+#### 3.3.1 Implementation Details
 
 The feature is driven by two main methods: `handleListAll()` and `handleListFromDate()`. Both methods depend on the `FoodList` component to retrieve data and the `UserInterface` to display the results to the user.
 
@@ -181,11 +175,11 @@ Below is the sequence diagram illustrating the execution flow of the `handleList
 
 ---
 
-### 3. Adding a Food Item `add`
+### 3.4 Adding a Food Item `add`
 
 The `add` feature allows users to log a new food entry into the tracker. It is implemented with a single execution path that handles parsing, validation, and storage of the new food item.
 
-#### 3.1 Implementation Details
+#### 3.4.1 Implementation Details
 
 The feature is driven by the `execute()` method in `AddCommand.java`. It depends on the `FoodList` component to store data and the `UserInterface` to display feedback to the user.
 
@@ -205,7 +199,7 @@ Below is the sequence diagram illustrating the execution flow of the `add` comma
 
 ---
 
-### 4. Editing a Food Item `edit`
+### 3.5 Editing a Food Item `edit`
 
 The `edit` feature allows users to update one or more fields of an existing food item without deleting and re-adding it. Only the specified fields are changed.
 
@@ -213,7 +207,7 @@ The `edit` feature allows users to update one or more fields of an existing food
 
 At least one field must be provided.
 
-#### 4.1 Implementation Details
+#### 3.5.1 Implementation Details
 
 **Executing `edit INDEX [fields]`:**
 1. **Parsing:** The command is split into three parts: keyword, index, and fields string.
@@ -229,11 +223,11 @@ At least one field must be provided.
 
 ---
 
-### 5. Deleting a Food Item `delete`
+### 3.6 Deleting a Food Item `delete`
 
 The `delete` feature allows users to remove a logged food item from the list by its displayed index. After deletion, a daily progress summary is shown to reflect the updated intake against the user's goals.
 
-#### 5.1 Implementation Details
+####  3.6.1 Implementation Details
 
 The feature is implemented in `DeleteCommand`, following the Command Pattern. `Parser` creates the command object and `Bitbites` calls `execute(context)`.
 
@@ -251,11 +245,11 @@ The feature is implemented in `DeleteCommand`, following the Command Pattern. `P
 
 ---
 
-### 6. Exiting the Application `exit`
+### 3.7 Exiting the Application `exit`
 
 The `exit` feature allows users to terminate the application safely when they are done. It is implemented as a direct command branch in `Parser.parse(...)` and integrates with the main application loop in `Bitbites`.
 
-#### 6.1 Implementation Details
+#### 3.7.1 Implementation Details
 
 When the user inputs `exit`, the following execution flow occurs:
 
@@ -264,29 +258,29 @@ When the user inputs `exit`, the following execution flow occurs:
 
 ---
 
-### 7. Help Command `help`
+### 3.8 Help Command `help`
 
 The `help` command displays a summary of all available commands and their formats.
 
 **Format:** `help`
 
-#### 7.1 Implementation Details
+#### 3.8.1 Implementation Details
 
 `HelpCommand.execute()` delegates entirely to `ui.showHelp()`, which prints `BitbitesResponses.helpMessage`. No data access or modification occurs.
 
 ---
 
-### 8. Motivational Messages `motivate`
+### 3.9 Motivational Messages `motivate`
 
 The `motivate` feature provides personalized motivational messages and encouragement to users. This feature is designed to keep users engaged and motivated to maintain healthy eating habits.
 
 **Format:** `motivate`
 
-#### 8.1 Implementation Details
+#### 3.9.1 Implementation Details
 
 The feature is implemented in `MotivateCommand.java` with support for different motivation types (currently only random is active).
 
-#### 8.2 Supported Motivation Types
+#### 3.9.2 Supported Motivation Types
 
 Currently, only the **random** type is implemented, in next step we will focus on `progress` and `goals`:
 
@@ -298,13 +292,13 @@ Currently, only the **random** type is implemented, in next step we will focus o
 
 ---
 
-### 9. Finding Food Items `find`
+### 3.10 Finding Food Items `find`
 
 The `find` feature provides users with search functionality to locate food items by name. This allows users to quickly retrieve and review previously logged meals.
 
 **Format:** `find KEYWORD`
 
-#### 9.1 Implementation Details
+#### 3.10.1 Implementation Details
 
 The feature is implemented in `FindCommand.java` and enables case-insensitive full-name matching of food items in the `FoodList`.
 
@@ -322,14 +316,14 @@ When the user inputs `find` followed by a search keyword, the following executio
    - If matches are found, they are displayed with a count and formatted table.
 7. **Logger:** The find command execution is logged at `Level.FINE`.
 
-#### 9.2 Search Behavior
+#### 3.10.2 Search Behavior
 
 The search uses **exact name matching** (case-insensitive):
 
 - Searching for `burger` will match items named `"Burger"`, `"BURGER"`, or `"burger"`.
 - Searching for `burger` will **not** match `"cheeseburger"` or `"beef burger"` (partial matches are not supported).
 
-#### 9.3 User Feedback
+#### 3.10.3 User Feedback
 
 The feature provides clear visual feedback, for example:
 
@@ -344,11 +338,11 @@ Search Results for: "burger"
 
 ---
 
-### 10. Managing User Profiles `profile`
+### 3.11 Managing User Profiles `profile`
 
 The `profile` feature allows each user to store and retrieve their personal physical attributes. It integrates with the `goals` feature to automatically set sensible calorie targets when a profile is saved.
 
-#### 10.1 Implementation Details
+#### 3.11.1 Implementation Details
 
 **Supported sub-commands:**
 
@@ -373,7 +367,7 @@ The sequence diagram below illustrates the execution of `profile set ...`:
 
 ![profile set sequence diagram](uml/profile_set.png)
 
-#### 10.2 The `Profile` Model
+#### 3.11.2 The `Profile` Model
 
 `Profile` stores five fields: `name`, `gender`, `age`, `weight` (kg), and `height` (cm). It derives two computed values:
 
@@ -391,11 +385,11 @@ BMI is also categorised into `Underweight`, `Normal`, `Overweight`, or `Obese` b
 
 ---
 
-### 11. Managing Nutritional Goals `goals`
+### 3.12 Managing Nutritional Goals `goals`
 
 The `goals` feature allows users to set daily and weekly calorie and protein targets, and view their current progress against those targets. Goals are persisted per user and are automatically set when a profile is saved.
 
-#### 11.1 Implementation Details
+#### 3.12.1 Implementation Details
 
 The feature is driven by `GoalsCommand.java`, with persistence handled by `GoalsStorage.java`.
 
@@ -443,7 +437,7 @@ The sequence diagram below illustrates the execution of `goals set ...`:
 
 ---
 
-### 12. Summary Commands `summary`
+### 3.13 Summary Commands `summary`
 
 The `summary` feature provides nutritional breakdowns for logged food items. It supports three sub-commands.
 
@@ -453,7 +447,7 @@ The `summary` feature provides nutritional breakdowns for logged food items. It 
 | `summary from/DATE1 to/DATE2` | Trend across a date range |
 | `summary compare d/DATE1 d/DATE2` | Comparison of two days |
 
-#### 12.1 Implementation Details
+#### 3.13.1 Implementation Details
 
 Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` objects from `FoodList` and pass them to `UserInterface`.
 
@@ -488,7 +482,7 @@ Each sub-command is a dedicated Command class. All retrieve `NutritionSummary` o
 
 ---
 
-### 13. History Commands `history`
+### 3.14 History Commands `history`
 
 The `history` feature shows a chronological log of all recorded days. It supports four sub-commands.
 
@@ -499,7 +493,7 @@ The `history` feature shows a chronological log of all recorded days. It support
 | `history /best N` | Top N days closest to daily calorie goal |
 | `history streak` | Current and longest consecutive recording streak |
 
-#### 13.1 Implementation Details
+#### 3.14.1 Implementation Details
 
 **`history`:**
 `HistoryCommand` retrieves past and present daily summaries via `getPastAndTodaySummaries()`, which filters out future-dated entries, then reverses the list so the most recent date appears first. It checks whether any food has been logged today using `LocalDate.now()`, and passes all daily summaries along with a `recordedToday` flag to `ui.showHistory()`, which appends a reminder if today has not been logged.
@@ -523,11 +517,11 @@ The `history` feature shows a chronological log of all recorded days. It support
 
 ---
 
-### 14. Storage Components
+### 3.15 Storage Components
 
 BitBites uses two independent storage classes — `ProfileStorage` and `GoalsStorage` — both located in the `storage` package. Each class reads and writes plain-text key-value files stored in the `data/` directory.
 
-#### 13.1 File Naming Convention
+#### 3.15.1 File Naming Convention
 
 Both storage classes derive a safe filename from the user's name by converting it to lowercase and replacing spaces with underscores:
 
@@ -538,7 +532,7 @@ data/<safeName>_goals.txt
 
 For example, a user named `"John Doe"` produces the files `data/john_doe_profile.txt` and `data/john_doe_goals.txt`. This allows multiple users to maintain independent data on the same system.
 
-#### 14.2 File Formats
+#### 3.15.2 File Formats
 
 **Profile file** (`<n>_profile.txt`):
 ```
@@ -559,11 +553,11 @@ weeklyProtein=VALUE
 
 Both files are read line-by-line in a fixed order. Each line is split on the `=` character and the second element is parsed into the appropriate type (`int`, `double`, or `String`).
 
-#### 14.3 Error Handling
+#### 3.15.3 Error Handling
 
 Both `loadProfile()` and `loadGoals()` return `null` if the file does not exist or if any line fails to parse (caught via `IOException` or `NumberFormatException`). Callers treat a `null` return as "no saved data" and fall back to defaults. This means a corrupted or missing file degrades gracefully without crashing the application.
 
-#### 14.4 Key Public Methods
+#### 3.15.4 Key Public Methods
 
 | Class | Method | Description |
 |---|---|---|
