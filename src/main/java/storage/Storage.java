@@ -54,6 +54,7 @@ public class Storage {
      */
     public ArrayList<Food> load() throws FileNotFoundException {
         ArrayList<Food> loadedFoods = new ArrayList<>();
+        boolean isPresetFile = filePath.contains("preset");
         File file = new File(filePath);
 
         if (!file.exists()) {
@@ -70,9 +71,16 @@ public class Storage {
                     String name = parts[0].trim();
                     String dateStr = parts[3].trim();
 
-                    if (!dateStr.matches("\\d{2}-\\d{2}-\\d{4}")) {
-                        logger.log(Level.WARNING, "Skipping entry with invalid date: " + line);
-                        continue;
+                    if (isPresetFile) {
+                        if (!dateStr.equals("PRESET")) {
+                            logger.log(Level.WARNING, "Skipping non-preset entry in preset file: " + line);
+                            continue;
+                        }
+                    } else {
+                        if (!dateStr.matches("\\d{2}-\\d{2}-\\d{4}")) {
+                            logger.log(Level.WARNING, "Skipping entry with invalid date: " + line);
+                            continue;
+                        }
                     }
 
                     try {
