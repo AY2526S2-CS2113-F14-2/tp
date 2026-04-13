@@ -60,30 +60,15 @@ public class AddCommand extends Command {
         }
 
         try {
-            String name = fullCommand.substring(
-                    fullCommand.indexOf("n/") + 2,
-                    fullCommand.indexOf("c/")
-            ).trim();
+            String[] prefixes = {"n/", "c/", "p/", "d/"};
 
-            String caloriesStr = fullCommand.substring(
-                    fullCommand.indexOf("c/") + 2,
-                    fullCommand.indexOf("p/")
-            ).trim();
-
-            String proteinStr;
+            String name = extractValue(fullCommand, "n/", nextPrefix(fullCommand, "n/", prefixes));
+            String caloriesStr = extractValue(fullCommand, "c/", nextPrefix(fullCommand, "c/", prefixes));
+            String proteinStr = extractValue(fullCommand, "p/", nextPrefix(fullCommand, "p/", prefixes));
             String date;
             if (fullCommand.contains("d/")) {
-                proteinStr = fullCommand.substring(
-                        fullCommand.indexOf("p/") + 2,
-                        fullCommand.indexOf("d/")
-                ).trim();
-                date = fullCommand.substring(
-                        fullCommand.indexOf("d/") + 2
-                ).trim();
+                date = extractValue(fullCommand, "d/", nextPrefix(fullCommand, "d/", prefixes));
             } else {
-                proteinStr = fullCommand.substring(
-                        fullCommand.indexOf("p/") + 2
-                ).trim();
                 date = java.time.LocalDate.now().format(
                         java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy"));
             }
