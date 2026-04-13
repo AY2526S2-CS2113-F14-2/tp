@@ -92,7 +92,7 @@ public class Bitbites {
                 isExit = command.execute(context);
                 Storage.forUser(ui.getCurrentUser()).save(context.getFoodList());
                 Storage.forUserPresets(ui.getCurrentUser()).save(context.getPresetList());
-                System.out.println("- - - - - - - - - - - - - - - - - - - -");
+                System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
             } catch (BitbitesException e) {
                 ui.showError(e.getMessage());
             }
