@@ -43,10 +43,10 @@ With Bitbites you can:
 
 1. Ensure you have **Java 17** or above installed on your computer.
 2. Download the latest version of `BitBites` from [here](https://github.com/AY2526S2-CS2113-F14-2/tp/releases).
-3. Open a terminal and navigate to the folder containing `bitbites.jar`.
+3. Open a terminal and navigate to the folder containing `[CS2113-F14-2][BitBites].jar`.
 4. Run the application with:
    ```
-   java -jar bitbites.jar
+   java -jar [CS2113-F14-2][BitBites].jar
    ```
 5. When prompted, enter your name (invalid usernames will be rejected). Bitbites will greet you as a returning user if a profile is found, or guide you to set one up if not.
 6. Type `help` to see a list of all available commands.
