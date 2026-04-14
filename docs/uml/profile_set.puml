@@ -18,7 +18,7 @@ deactivate Parser
 Bitbites -> ProfileCommand : execute(context)
 activate ProfileCommand
 
-alt [missing prefix or blank input]
+alt [* missing prefix or blank input]
   ProfileCommand --> Bitbites : print format error, return false
 end
 
@@ -31,9 +31,9 @@ ProfileCommand -> ProfileCommand : extractValue() for each prefix
 activate ProfileCommand
 deactivate ProfileCommand
 
-alt [invalid gender]
+alt [* invalid gender]
   ProfileCommand --> Bitbites : print error, return false
-else [age/weight/height out of range]
+else [* age/weight/height out of range]
   ProfileCommand --> Bitbites : print error, return false
 end
 

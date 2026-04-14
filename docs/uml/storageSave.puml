@@ -27,7 +27,7 @@ activate FoodList
 FoodList --> FoodStorage : size
 deactivate FoodList
 
-loop [i < size]
+loop [* i < size]
   FoodStorage -> FoodList : getFood(i)
   activate FoodList
   FoodList --> FoodStorage : food
