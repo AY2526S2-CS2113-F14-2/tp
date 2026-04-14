@@ -1673,8 +1673,111 @@ class BitbitesTest {
     }
     // @@author
 
+    // ── LoginCommand ──────────────────────────────────────
+
+    /**
+     * Verifies that Parser returns a LoginCommand for login input.
+     */
     @Test
-    public void sampleExit() {
-        assertTrue(true);
+    void parser_login_returnsCorrectCommand() {
+        assertInstanceOf(command.LoginCommand.class, Parser.parse("login"));
+    }
+
+    /**
+     * Verifies that profile list executes without error.
+     */
+    @Test
+    void profileCommand_list_doesNotThrow() {
+        assertDoesNotThrow(() -> Parser.parse("profile list").execute(context));
+    }
+
+    /**
+     * Verifies that setting a female profile does not throw.
+     */
+    @Test
+    void profileCommand_femaleGender_doesNotThrow() {
+        assertDoesNotThrow(() ->
+                Parser.parse("profile set n/Alice g/female a/22 w/55 h/165").execute(context)
+        );
+    }
+
+    /**
+     * Verifies that profile set with only one field does not throw.
+     */
+    @Test
+    void profileCommand_singleField_doesNotThrow() {
+        assertDoesNotThrow(() ->
+                Parser.parse("profile set n/James").execute(context)
+        );
+    }
+
+    /**
+     * Verifies that profile clear followed by profile view does not throw.
+     */
+    @Test
+    void profileCommand_clearThenView_doesNotThrow() {
+        Parser.parse("profile set n/James g/male a/25 w/70 h/175").execute(context);
+        Parser.parse("profile clear").execute(context);
+        assertDoesNotThrow(() -> Parser.parse("profile").execute(context));
+    }
+
+    // ── Bitbites Integration ──────────────────────────────
+
+    /**
+     * Verifies that adding a food item and then listing returns the correct size.
+     */
+    @Test
+    void bites_addThenList_correctSize() {
+        int sizeBefore = foodList.size();
+        Parser.parse("add n/Apple c/95 p/0.5 d/01-04-2026").execute(context);
+        assertEquals(sizeBefore + 1, foodList.size());
+        assertFalse(Parser.parse("list").execute(context));
+    }
+
+    /**
+     * Verifies that adding then deleting returns to original size.
+     */
+    @Test
+    void bites_addThenDelete_correctSize() {
+        int sizeBefore = foodList.size();
+        Parser.parse("add n/Apple c/95 p/0.5 d/01-04-2026").execute(context);
+        Parser.parse("delete " + (sizeBefore + 1)).execute(context);
+        assertEquals(sizeBefore, foodList.size());
+    }
+
+    /**
+     * Verifies that adding then editing updates the item correctly.
+     */
+    @Test
+    void bites_addThenEdit_correctName() {
+        Parser.parse("add n/Apple c/95 p/0.5 d/01-04-2026").execute(context);
+        int index = foodList.size();
+        Parser.parse("edit " + index + " n/Green Apple").execute(context);
+        assertEquals("Green Apple", foodList.get(index - 1).getName());
+    }
+
+    /**
+     * Verifies that multiple commands execute in sequence without error.
+     */
+    @Test
+    void bites_multipleCommands_doesNotThrow() {
+        assertDoesNotThrow(() -> {
+            Parser.parse("add n/Apple c/95 p/0.5 d/01-04-2026").execute(context);
+            Parser.parse("list").execute(context);
+            Parser.parse("goals").execute(context);
+            Parser.parse("history").execute(context);
+            Parser.parse("tips").execute(context);
+            Parser.parse("help").execute(context);
+        });
+    }
+
+    /**
+     * Verifies that unknown command throws BitbitesException.
+     */
+    @Test
+    void bites_unknownCommand_throwsException() {
+        assertThrows(BitbitesException.class, () ->
+                Parser.parse("invalidcommand").execute(context)
+        );
     }
 }
