@@ -70,7 +70,7 @@ public class ProfileStorage {
             double height = Double.parseDouble(reader.readLine().split("=")[1]);
             reader.close();
             return new Profile(profileName, gender, age, weight, height);
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException | NumberFormatException | NullPointerException | ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
@@ -93,7 +93,7 @@ public class ProfileStorage {
             double height = Double.parseDouble(reader.readLine().split("=")[1]);
             reader.close();
             return new Profile(profileName, gender, age, weight, height);
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException | NumberFormatException | NullPointerException | ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
