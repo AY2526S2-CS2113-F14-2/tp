@@ -102,7 +102,8 @@ public class PresetCommand extends Command {
                 throw new BitbitesException("Invalid values. Name cannot be empty, numbers must be positive.");
             }
             if (calories > 10000) {
-                throw new BitbitesException("Calories value is too large. Please enter a realistic value (max 10000 kcal).");
+                throw new BitbitesException("Calories value is too large. " +
+                        "Please enter a realistic value (max 10000 kcal).");
             }
             if (protein > 1000) {
                 throw new BitbitesException("Protein value is too large. Please enter a realistic value (max 1000g).");
