@@ -42,12 +42,19 @@ public class LoginCommand extends Command {
 
         System.out.println("========== LOGIN ==========");
         System.out.println("Enter your name to login:");
-        String username = ui.readCommand().trim();
+        String username = "";
+        while (true) {
+            System.out.println("Enter your name to login:");
+            username = ui.readCommand().trim();
 
-        if (username.isEmpty()) {
-            System.out.println("Username cannot be empty.");
-            logger.log(Level.WARNING, "Login attempted with empty username");
-            return false;
+            if (username.isEmpty()) {
+                System.out.println("Username cannot be empty. Please try again.");
+            } else if (!username.matches("[a-zA-Z][a-zA-Z0-9 ]*")) {
+                System.out.println("Name must start with a letter and can only contain letters, " +
+                        "numbers, and spaces. Please try again.");
+            } else {
+                break;
+            }
         }
 
         logger.log(Level.INFO, "Login attempt for user: " + username);

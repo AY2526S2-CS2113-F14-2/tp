@@ -218,13 +218,13 @@ summary from/01-04-2025 to/07-04-2025
 
 ### Viewing food history : `history`
 
-Displays a historical overview of all days you have logged food.
+Displays a historical overview of past days you have logged food (future-dated logs are excluded).
 
 #### Full history
 
 **Format:** `history`
 
-Shows a table of all logged dates with total calories, protein, and a segmented bar. Also indicates whether you have recorded food today.
+Shows a table of past logged dates (excluding future dates) with total calories, protein, and a segmented bar. Also indicates whether you have recorded food today.
 
 #### Top N highest calorie days
 
@@ -252,7 +252,7 @@ history /best 3
 
 **Format:** `history streak`
 
-Shows your current consecutive logging streak and your all-time longest streak. A streak is maintained as long as you log at least one food entry each day.
+Shows your current consecutive logging streak and your all-time longest streak based on past logs only. A streak is maintained as long as you log at least one food entry each day.
 Today counts toward your streak if you have already logged food today; otherwise, yesterday's entry keeps your streak alive until you log today.
 
 ---
@@ -439,6 +439,7 @@ Alice
 
 > **Note:** Switching users with `login` updates goals, profile, preset, and list operations to the operations associated with the chosen username.
 
+>**Note:** Names can only contain alphanumeric characters and spaces. A username cannot consist of pure numbers.
 ---
 
 
@@ -485,7 +486,7 @@ Bitbites saves your data automatically to the `data/` folder in the same directo
 
 **Q: Can I use Bitbites with multiple user accounts on the same computer?**
 
-Yes. Each user's profile and goals are saved in separate files named after the user (e.g., `alice_profile.txt`, `bob_profile.txt`). Use `login` to change the active user. Note that the food log and presets are shared in the current version.
+Yes. Each user's profile and goals are saved in separate files named after the user (e.g., `alice_profile.txt`, `bob_profile.txt`). Use `login` to change the active user. Similarly, a user's food list and preset list are not shared between users.
 
 **Q: What happens if I forget to include the date when adding food?**
 
@@ -493,7 +494,7 @@ The `d/DATE` field is optional. Omitting it will add the food to today's date.
 
 **Q: Can I log food for a past or future date?**
 
-Yes. Simply provide the date you want in `DD-MM-YYYY` format. Bitbites does not restrict which dates you can log.
+Yes. Simply provide the date you want in `DD-MM-YYYY` format. Bitbites will only reject invalid calendar dates.
 
 **Q: What does `history /best N` show?**
 

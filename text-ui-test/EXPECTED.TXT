@@ -8,7 +8,7 @@ __________._____________________________.___.______________________
 
 What is your name?
 Hello James Gosling! Set up your profile with:
-  profile set n/James Gosling g/GENDER a/AGE w/WEIGHT h/HEIGHT
+  profile set g/GENDER a/AGE w/WEIGHT h/HEIGHT
 Type 'help' for a list of available commands.
 Bye. Hope to see you again soon!
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

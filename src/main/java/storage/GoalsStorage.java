@@ -71,7 +71,7 @@ public class GoalsStorage {
             double weeklyProtein = Double.parseDouble(reader.readLine().split("=")[1]);
             reader.close();
             return new double[]{dailyCalories, dailyProtein, weeklyCalories, weeklyProtein};
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException | NumberFormatException | NullPointerException | ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
