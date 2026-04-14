@@ -10,7 +10,7 @@
   - 3.4 [Adding a Food Item `add`](#34-adding-a-food-item-add)
   - 3.5 [Editing a Food Item `edit`](#35-editing-a-food-item-edit)
   - 3.6 [Deleting a Food Item `delete`](#36-deleting-a-food-item-delete)
-  - 3.7 [Exiting the Application `exit`](#37-exiting-the-application-exit)
+  - 3.7 [Set a preset `preset`](#37-food-presets-preset)
   - 3.8 [Help Command `help`](#38-help-command-help)
   - 3.9 [Motivational Messages `motivate`](#39-motivational-messages-motivate)
   - 3.10 [Finding Food Items `find`](#310-finding-food-items-find)
@@ -19,6 +19,7 @@
   - 3.13 [Summary Commands `summary`](#313-summary-commands-summary)
   - 3.14 [History Commands `history`](#314-history-commands-history)
   - 3.15 [Storage Components](#315-storage-components))
+  - 3.16 [Exiting the Application `exit`](#316-exiting-the-application-exit)
 4. [Appendix A: Product Scope](#appendix-a-product-scope)
 5. [Appendix B: User Stories](#appendix-b-user-stories)
 6. [Appendix C: Non-Functional Requirements](#appendix-c-non-functional-requirements)
@@ -245,16 +246,36 @@ The feature is implemented in `DeleteCommand`, following the Command Pattern. `P
 
 ---
 
-### 3.7 Exiting the Application `exit`
+### 3.7. Food Presets `preset`
+The `preset` feature allows users to save frequently consumed food items as templates and quickly log them later without needing to re-enter the nutritional information. It supports four sub-commands.
 
-The `exit` feature allows users to terminate the application safely when they are done. It is implemented as a direct command branch in `Parser.parse(...)` and integrates with the main application loop in `Bitbites`.
+| Command | Description |
+|---------|-------------|
+| `preset add n/NAME c/CALORIES p/PROTEIN` | Saves a new food template |
+| `preset list` | Displays all saved templates |
+| `preset delete INDEX` | Removes a saved template by its index |
+| `preset use INDEX [d/DATE]` | Logs a template to the food diary |
 
 #### 3.7.1 Implementation Details
+The feature is driven by the `PresetCommand` class, which receives both the `FoodList` and `PresetList` from the `AppContext`. The command string is split to determine the specific action (`add`, `list`, `delete`, or `use`), and execution is routed to the corresponding internal handler method.
 
-When the user inputs `exit`, the following execution flow occurs:
+**`preset add`:**
+1. **Validation:** Checks that the `n/`, `c/`, and `p/` prefixes are all present.
+2. **Extraction:** Extracts the name, calories, and protein using the internal `extractField()` method.
+3. **Creation:** Validates that numbers are positive and the name is not empty. A new `Food` object is created with a hardcoded date of `"PRESET"` and added to the `PresetList`.
 
-1. **Command Matching:** `Parser.parse(...)` checks whether the trimmed input is exactly `exit`.
-2. **User Feedback:** The parser invokes `ui.showExit()` to display a farewell message.
+**`preset list` & `preset delete`:**
+1. **List:** Checks if `PresetList` is empty. If not, it iterates through the list, printing each preset's name, calories, and protein alongside a 1-based index.
+2. **Delete:** Parses the provided index, converts it to a 0-based index, and calls `PresetList.deletePreset(index)`. The deleted item is displayed to the user as confirmation.
+
+**`preset use`:**
+1. **Index Retrieval:** Parses the target index and retrieves the corresponding `Food` template from the `PresetList`.
+2. **Date Determination:** Defaults the logging date to today using `LocalDate.now()`. If the user provided the optional `d/DATE` prefix, it overrides the default date and validates the `DD-MM-YYYY` format.
+3. **Logging:** Creates a brand-new `Food` object using the template's nutritional values and the determined date, then adds it to the `FoodList`.
+
+Below is the sequence diagram illustrating the execution flow of using a preset:
+
+![preset use sequence diagram](uml/presetUse.png)
 
 ---
 
@@ -568,6 +589,19 @@ Both `loadProfile()` and `loadGoals()` return `null` if the file does not exist 
 | `GoalsStorage` | `saveGoals(name, dc, dp, wc, wp)` | Writes all four goal values to disk |
 | `GoalsStorage` | `loadGoals(String name)` | Returns a `double[]` of four values, or `null` |
 | `GoalsStorage` | `goalsExist(String name)` | Checks if a goals file exists |
+
+---
+
+### 3.16 Exiting the Application `exit`
+
+The `exit` feature allows users to terminate the application safely when they are done. It is implemented as a direct command branch in `Parser.parse(...)` and integrates with the main application loop in `Bitbites`.
+
+#### 3.16.1 Implementation Details
+
+When the user inputs `exit`, the following execution flow occurs:
+
+1. **Command Matching:** `Parser.parse(...)` checks whether the trimmed input is exactly `exit`.
+2. **User Feedback:** The parser invokes `ui.showExit()` to display a farewell message.
 
 ---
 
