@@ -48,7 +48,7 @@ With Bitbites you can:
    ```
    java -jar bitbites.jar
    ```
-5. When prompted, enter your name. Bitbites will greet you as a returning user if a profile is found, or guide you to set one up if not.
+5. When prompted, enter your name (invalid usernames will be rejected). Bitbites will greet you as a returning user if a profile is found, or guide you to set one up if not.
 6. Type `help` to see a list of all available commands.
 
 ---
@@ -97,7 +97,7 @@ Date is optional and will use today's date if left empty. Parameters can be prov
 add n/Chicken Rice c/500 p/30 d/01-04-2025
 add n/Banana c/105 p/1.3 d/01-04-2025
 ```
-> **Note:** Calories must be a whole integer, protein may be a decimal. Both must be non-negative. The date must strictly follow `DD-MM-YYYY` format.
+> **Note:** Calories must be a whole integer between 0 and 10,000 kcal, protein may be a decimal  between 0 and 1000g. The date must strictly follow `DD-MM-YYYY` format and must be a real calendar date.
 
 > **Note:** Input cannot contain the character "|", as it is a reserved character used in data storage.
 ---
@@ -271,6 +271,7 @@ Date is not stored in a preset — it is applied when you use the preset.
 ```
 preset add n/Protein Shake c/200 p/30
 ```
+> **Note:** The same validation rules apply as in `add`.
 
 #### Viewing all presets
 
@@ -311,7 +312,7 @@ Set and track your daily and weekly calorie and protein targets.
 
 **Format:** `goals`
 
-Displays your daily and weekly goals alongside your current intake for today and the current week (Monday to Sunday).
+Displays your daily and weekly goals alongside your current intake for today and the current week (Monday to Sunday), show `GOAL reached` if calories or protein goal is reached. 
 
 #### Setting goals
 
@@ -439,7 +440,7 @@ Alice
 
 > **Note:** Switching users with `login` updates goals, profile, preset, and list operations to the operations associated with the chosen username.
 
->**Note:** Names can only contain alphanumeric characters and spaces. A username cannot consist of pure numbers.
+>**Note:** Names can only contain alphanumeric characters and spaces and cannot contain `|`. A username cannot consist of pure numbers. 
 ---
 
 

@@ -23,7 +23,7 @@ activate AppContext
 AppContext --> ListByDateCommand : foods
 deactivate AppContext
 
-loop [for i = 0 to foods.size() - 1]
+loop [* for i = 0 to foods.size() - 1]
   ListByDateCommand -> FoodList : get(i)
   activate FoodList
   FoodList --> ListByDateCommand : foodItem
@@ -34,7 +34,7 @@ loop [for i = 0 to foods.size() - 1]
   Food --> ListByDateCommand : itemDate
   deactivate Food
 
-  opt [itemDate.equals(date)]
+  opt [* itemDate.equals(date)]
     ListByDateCommand -> ListByDateCommand : print(foodItem)
     activate ListByDateCommand
     deactivate ListByDateCommand

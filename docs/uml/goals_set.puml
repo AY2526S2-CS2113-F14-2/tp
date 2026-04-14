@@ -25,9 +25,9 @@ GoalsCommand -> GoalsCommand : loadGoalsIfNeeded()
 activate GoalsCommand
 deactivate GoalsCommand
 
-alt [no subcommand provided]
+alt [* no subcommand provided]
   GoalsCommand -> UI : print format reminder
-else [no valid prefix found]
+else [* no valid prefix found]
   GoalsCommand -> UI : print unknown prefix error
 end
 
@@ -35,13 +35,13 @@ GoalsCommand -> GoalsCommand : handleSetGoals(fullCommand)
 activate GoalsCommand
 deactivate GoalsCommand
 
-loop [for each prefix present]
+loop [* for each prefix present]
   GoalsCommand -> GoalsCommand : extractValue()
   activate GoalsCommand
   deactivate GoalsCommand
-  alt [value invalid or non-numeric]
+  alt [* value invalid or non-numeric]
     GoalsCommand -> UI : print error
-  else [value valid]
+  else [* value valid]
     GoalsCommand -> GoalsCommand : update goal field
     activate GoalsCommand
     deactivate GoalsCommand

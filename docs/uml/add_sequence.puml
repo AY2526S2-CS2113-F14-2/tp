@@ -18,13 +18,13 @@ deactivate Parser
 Bitbites -> AddCommand : execute(context)
 activate AddCommand
 
-alt [missing prefix, empty field, or invalid values]
+alt [* missing prefix, empty field, or invalid values]
   AddCommand -> UI : print error message
   activate UI
   UI --> AddCommand
   deactivate UI
   AddCommand --> Bitbites : false
-else [valid input]
+else [* valid input]
   AddCommand -> AddCommand : extractFields()
   activate AddCommand
   deactivate AddCommand
