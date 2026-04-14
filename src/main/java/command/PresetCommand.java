@@ -81,6 +81,10 @@ public class PresetCommand extends Command {
     }
 
     private void handleAdd(String args, PresetList presetList) {
+        if (args.contains("|")) {
+            throw new BitbitesException("Input must not contain '|' as it is a reserved character.");
+        }
+
         if (!args.contains("n/") || !args.contains("c/") || !args.contains("p/")) {
             throw new BitbitesException("Format: preset add n/NAME c/CALORIES p/PROTEIN");
         }
@@ -97,7 +101,12 @@ public class PresetCommand extends Command {
             if (name.isEmpty() || calories < 0 || protein < 0) {
                 throw new BitbitesException("Invalid values. Name cannot be empty, numbers must be positive.");
             }
-
+            if (calories > 10000) {
+                throw new BitbitesException("Calories value is too large. Please enter a realistic value (max 10000 kcal).");
+            }
+            if (protein > 1000) {
+                throw new BitbitesException("Protein value is too large. Please enter a realistic value (max 1000g).");
+            }
             Food presetFood = new Food(name, calories, protein, "PRESET");
             presetList.addPreset(presetFood);
 
