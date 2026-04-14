@@ -85,8 +85,8 @@ Fixed 13 bugs across multiple features discovered during testing:
 - Section 3.1: Architecture Overview
 - Section 3.2: Design — Command Pattern and AppContext
 - Section 3.4: Adding a Food Item
-- Section 3.9: Managing User Profiles
-- Section 3.10: Managing Nutritional Goals
+- Section 3.11: Managing User Profiles
+- Section 3.12: Managing Nutritional Goals
 
 **UML Diagrams:** `architecture.png`,`add_sequence.png`, `command_class.png`, `goals_set.png`,
 `profile_set.png`
@@ -126,6 +126,7 @@ PRs reviewed:
 [#138](https://github.com/AY2526S2-CS2113-F14-2/tp/pull/138),
 [#142](https://github.com/AY2526S2-CS2113-F14-2/tp/pull/142),
 [#144](https://github.com/AY2526S2-CS2113-F14-2/tp/pull/144),
-[#147](https://github.com/AY2526S2-CS2113-F14-2/tp/pull/147)
+[#147](https://github.com/AY2526S2-CS2113-F14-2/tp/pull/147),
+[#150](https://github.com/AY2526S2-CS2113-F14-2/tp/pull/150)
 ---
 
