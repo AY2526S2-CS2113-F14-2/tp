@@ -485,7 +485,7 @@ Bitbites saves your data automatically to the `data/` folder in the same directo
 
 **Q: Can I use Bitbites with multiple user accounts on the same computer?**
 
-Yes. Each user's profile and goals are saved in separate files named after the user (e.g., `alice_profile.txt`, `bob_profile.txt`). Use `login` to change the active user. Note that the food log and presets are shared in the current version.
+Yes. Each user's profile and goals are saved in separate files named after the user (e.g., `alice_profile.txt`, `bob_profile.txt`). Use `login` to change the active user. Similarly, a user's food list and preset list are not shared between users.
 
 **Q: What happens if I forget to include the date when adding food?**
 
@@ -493,7 +493,7 @@ The `d/DATE` field is optional. Omitting it will add the food to today's date.
 
 **Q: Can I log food for a past or future date?**
 
-Yes. Simply provide the date you want in `DD-MM-YYYY` format. Bitbites does not restrict which dates you can log.
+Yes. Simply provide the date you want in `DD-MM-YYYY` format. Bitbites will only reject invalid calendar dates.
 
 **Q: What does `history /best N` show?**
 
