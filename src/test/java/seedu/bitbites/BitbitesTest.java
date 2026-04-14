@@ -23,6 +23,7 @@ import command.GoalsCommand;
 import command.HelpCommand;
 import command.ListByDateCommand;
 import command.ListCommand;
+import command.MotivateCommand;
 import command.PresetCommand;
 import command.ProfileCommand;
 import command.SummaryByDateCommand;
@@ -182,6 +183,62 @@ class BitbitesTest {
     @Test
     void exitCommand_execute_doesNotThrow() {
         assertDoesNotThrow(() -> Parser.parse("exit").execute(context));
+    }
+
+    // --- MotivateCommand ---
+
+    /**
+     * Verifies that Parser returns a MotivateCommand for motivate input.
+     */
+    @Test
+    void parser_motivate_returnsCorrectCommand() {
+        Command command = Parser.parse("motivate");
+        assertInstanceOf(MotivateCommand.class, command);
+    }
+
+    /**
+     * Verifies that MotivateCommand returns false (does not trigger exit).
+     */
+    @Test
+    void motivateCommand_execute_returnsFalse() {
+        boolean isExit = Parser.parse("motivate").execute(context);
+        assertFalse(isExit);
+    }
+
+    /**
+     * Verifies that MotivateCommand does not modify the food list.
+     */
+    @Test
+    void motivateCommand_doesNotModifyFoodList() {
+        int sizeBefore = foodList.size();
+        Parser.parse("motivate").execute(context);
+        assertEquals(sizeBefore, foodList.size());
+    }
+
+    /**
+     * Verifies that MotivateCommand does not modify the preset list.
+     */
+    @Test
+    void motivateCommand_doesNotModifyPresetList() {
+        int sizeBefore = presetList.size();
+        Parser.parse("motivate").execute(context);
+        assertEquals(sizeBefore, presetList.size());
+    }
+
+    /**
+     * Verifies that MotivateCommand executes without throwing an exception.
+     */
+    @Test
+    void motivateCommand_execute_doesNotThrow() {
+        assertDoesNotThrow(() -> Parser.parse("motivate").execute(context));
+    }
+
+    /**
+     * Verifies that MotivateCommand with different variations executes successfully.
+     */
+    @Test
+    void motivateCommand_variations_execute() {
+        assertFalse(Parser.parse("motivate").execute(context));
     }
 
     // --- Delete Command ---
