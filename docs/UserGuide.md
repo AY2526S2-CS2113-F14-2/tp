@@ -439,6 +439,7 @@ Alice
 
 > **Note:** Switching users with `login` updates goals, profile, preset, and list operations to the operations associated with the chosen username.
 
+>**Note:** Names can only contain alphanumeric characters and spaces. A username cannot consist of pure numbers.
 ---
 
 
