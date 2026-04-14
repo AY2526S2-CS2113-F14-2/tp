@@ -60,11 +60,11 @@ git clone https://github.com/AY2526S2-CS2113-F14-2/tp.git
 cd tp
 ```
 
-1. Download the latest `bitbites.jar` file from the milestone releases page.
+1. Download the latest `[CS2113-F14-2][BitBites].jar` file from the milestone releases page.
 2. Open a terminal and navigate to the directory where you downloaded the JAR file.
 3. Run the application using:
    ```bash
-   java -jar bitbites.jar
+   java -jar [CS2113-F14-2][BitBites].jar
    ```
 
 Upon first launch, the application will prompt you to enter your name. This personalizes your session and is used to identify your profile and goals data.
@@ -709,7 +709,7 @@ This is not an exhaustive list — testers are encouraged to explore edge cases 
 ### E.1 Initial Launch
 
 1. Ensure the `data/` folder does not exist or is empty.
-2. Run `java -jar bitbites.jar`.
+2. Run `java -jar [CS2113-F14-2][BitBites].jar`.
 3. Enter any name when prompted (e.g., `James`).
 4. Verify that the application starts cleanly with no food items loaded.
 5. Run `list` and verify the list is empty.
