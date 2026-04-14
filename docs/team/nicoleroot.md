@@ -13,7 +13,7 @@ My contributions focused on the summary and history features, including nutritio
 
 ### Code Contributed
 
-[Link to tP Code Dashboard](#) *https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=nicoleroot&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2026-02-20T00%3A00%3A00&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=nicoleroot&tabRepo=AY2526S2-CS2113-F14-2%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=docs~functional-code~test-code~other&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false*
+[Link to tP Code Dashboard](*https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=nicoleroot&breakdown=true&sort=groupTitle%20dsc&sortWithin=title&since=2026-02-20T00%3A00%3A00&timeframe=commit&mergegroup=&groupSelect=groupByRepos&checkedFileTypes=docs~functional-code~test-code~other&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=nicoleroot&tabRepo=AY2526S2-CS2113-F14-2%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=docs~functional-code~test-code~other&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false*)
 
 ---
 
@@ -106,11 +106,38 @@ Implemented `TipsCommand` which displays tips for estimating calories and protei
 ### Review/Mentoring Contributions
 
 PRs reviewed by me:
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/152
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/151
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/149
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/148
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/145
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/89
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/86
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/85
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/83
+
+https://github.com/AY2526S2-CS2113-F14-2/tp/pull/81
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/65
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/57
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/54
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/47
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/37
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/33
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/21
+
 https://github.com/AY2526S2-CS2113-F14-2/tp/pull/16
