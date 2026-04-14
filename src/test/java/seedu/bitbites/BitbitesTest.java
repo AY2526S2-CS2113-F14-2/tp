@@ -17,6 +17,7 @@ import command.AddCommand;
 import command.Command;
 import command.DeleteCommand;
 import command.EditCommand;
+import command.ExitCommand;
 import command.FindCommand;
 import command.GoalsCommand;
 import command.HelpCommand;
@@ -135,7 +136,55 @@ class BitbitesTest {
         assertEquals(sizeBefore, foodList.size());
     }
 
-    // ── Delete Command ───────────────────────────────────────
+    // --- ExitCommand ---
+
+    /**
+     * Verifies that Parser returns an ExitCommand for exit input.
+     */
+    @Test
+    void parser_exit_returnsCorrectCommand() {
+        Command command = Parser.parse("exit");
+        assertInstanceOf(ExitCommand.class, command);
+    }
+
+    /**
+     * Verifies that ExitCommand returns true (triggers application exit).
+     */
+    @Test
+    void exitCommand_execute_returnsTrue() {
+        boolean isExit = Parser.parse("exit").execute(context);
+        assertTrue(isExit);
+    }
+
+    /**
+     * Verifies that ExitCommand does not modify the food list.
+     */
+    @Test
+    void exitCommand_doesNotModifyFoodList() {
+        int sizeBefore = foodList.size();
+        Parser.parse("exit").execute(context);
+        assertEquals(sizeBefore, foodList.size());
+    }
+
+    /**
+     * Verifies that ExitCommand does not modify the preset list.
+     */
+    @Test
+    void exitCommand_doesNotModifyPresetList() {
+        int sizeBefore = presetList.size();
+        Parser.parse("exit").execute(context);
+        assertEquals(sizeBefore, presetList.size());
+    }
+
+    /**
+     * Verifies that ExitCommand executes without throwing an exception.
+     */
+    @Test
+    void exitCommand_execute_doesNotThrow() {
+        assertDoesNotThrow(() -> Parser.parse("exit").execute(context));
+    }
+
+    // --- Delete Command ---
 
     /**
      * Verifies that deleting a valid index reduces the food list size by 1.
