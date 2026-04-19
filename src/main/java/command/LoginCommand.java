@@ -6,6 +6,7 @@ import model.Profile;
 import storage.ProfileStorage;
 import ui.UserInterface;
 import seedu.bitbites.AppContext;
+import seedu.bitbites.BitbitesResponses;
 import java.util.ArrayList;
 import model.Food;
 import model.FoodList;
@@ -45,6 +46,10 @@ public class LoginCommand extends Command {
         String username = "";
         while (true) {
             System.out.println("Enter your name to login:");
+            if (!ui.hasInput()) {
+                System.out.println(BitbitesResponses.EXIT_MESSAGE);
+                return true;
+            }
             username = ui.readCommand().trim();
 
             if (username.isEmpty()) {

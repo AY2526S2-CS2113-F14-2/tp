@@ -65,7 +65,9 @@ public class Bitbites {
         // Disable logging
         LogManager.getLogManager().reset();
 
-        ui.showWelcome();
+        if (!ui.showWelcome()) {
+            return;
+        }
         String username = ui.getCurrentUser();
         GoalsCommand.loadGoalsIfNeeded(username);
 
