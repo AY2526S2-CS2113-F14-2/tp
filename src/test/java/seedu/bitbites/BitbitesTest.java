@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +43,10 @@ import parser.Parser;
 import storage.Storage;
 import ui.ProgressBar;
 import ui.UserInterface;
-
+ 
 class BitbitesTest {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     @TempDir
     private Path tempDir;
@@ -73,6 +77,10 @@ class BitbitesTest {
      */
     private AppContext createContext(FoodList fl) {
         return new AppContext(fl, new PresetList(), new UserInterface());
+    }
+
+    private String offsetDate(int days) {
+        return LocalDate.now().plusDays(days).format(DATE_FORMATTER);
     }
 
     @Test
@@ -1118,8 +1126,8 @@ class BitbitesTest {
     @Test
     void getCurrentStreak_futureDates_excluded() {
         FoodList testFoods = new FoodList();
-        testFoods.addFood(new Food("A", 100, 10.0, "15-04-2026")); // future
-        testFoods.addFood(new Food("B", 100, 10.0, "16-04-2026")); // future
+        testFoods.addFood(new Food("A", 100, 10.0, offsetDate(10))); // future
+        testFoods.addFood(new Food("B", 100, 10.0, offsetDate(11))); // future
         assertEquals(0, testFoods.getCurrentStreak());
     }
 
@@ -1129,8 +1137,8 @@ class BitbitesTest {
     @Test
     void getLongestStreak_futureDates_excluded() {
         FoodList testFoods = new FoodList();
-        testFoods.addFood(new Food("A", 100, 10.0, "15-04-2026")); // future
-        testFoods.addFood(new Food("B", 100, 10.0, "16-04-2026")); // future
+        testFoods.addFood(new Food("A", 100, 10.0, offsetDate(10))); // future
+        testFoods.addFood(new Food("B", 100, 10.0, offsetDate(11))); // future
         assertEquals(0, testFoods.getLongestStreak());
     }
 
@@ -1141,10 +1149,10 @@ class BitbitesTest {
     @Test
     void getLongestStreak_mixedPastAndFuture_onlyCountsPast() {
         FoodList testFoods = new FoodList();
-        testFoods.addFood(new Food("A", 100, 10.0, "27-03-2026")); // past
-        testFoods.addFood(new Food("B", 100, 10.0, "28-03-2026")); // past
-        testFoods.addFood(new Food("C", 100, 10.0, "15-04-2026")); // future
-        testFoods.addFood(new Food("D", 100, 10.0, "16-04-2026")); // future
+        testFoods.addFood(new Food("A", 100, 10.0, offsetDate(-2))); // past
+        testFoods.addFood(new Food("B", 100, 10.0, offsetDate(-1))); // past
+        testFoods.addFood(new Food("C", 100, 10.0, offsetDate(10))); // future
+        testFoods.addFood(new Food("D", 100, 10.0, offsetDate(11))); // future
         assertEquals(2, testFoods.getLongestStreak());
     }
 
@@ -1154,11 +1162,12 @@ class BitbitesTest {
     @Test
     void getPastAndTodaySummaries_excludesFutureDates() {
         FoodList testFoods = new FoodList();
-        testFoods.addFood(new Food("A", 100, 10.0, "27-03-2026")); // past
-        testFoods.addFood(new Food("B", 100, 10.0, "15-04-2026")); // future
+        String pastDate = offsetDate(-1);
+        testFoods.addFood(new Food("A", 100, 10.0, pastDate)); // past
+        testFoods.addFood(new Food("B", 100, 10.0, offsetDate(10))); // future
         List<NutritionSummary> summaries = testFoods.getPastAndTodaySummaries();
         assertEquals(1, summaries.size());
-        assertEquals("27-03-2026", summaries.get(0).getDate());
+        assertEquals(pastDate, summaries.get(0).getDate());
     }
 
     /**
@@ -1167,8 +1176,8 @@ class BitbitesTest {
     @Test
     void getTopDaysByCalories_excludesFutureDates() {
         FoodList testFoods = new FoodList();
-        testFoods.addFood(new Food("A", 100, 10.0, "27-03-2026")); // past
-        testFoods.addFood(new Food("B", 9999, 10.0, "15-04-2026")); // future, high cal
+        testFoods.addFood(new Food("A", 100, 10.0, offsetDate(-1))); // past
+        testFoods.addFood(new Food("B", 9999, 10.0, offsetDate(10))); // future, high cal
         List<NutritionSummary> top = testFoods.getTopDaysByCalories(2);
         assertEquals(1, top.size());
         assertEquals(100, top.get(0).getTotalCalories());
@@ -1180,11 +1189,12 @@ class BitbitesTest {
     @Test
     void getDaysClosestToGoal_excludesFutureDates() {
         FoodList testFoods = new FoodList();
-        testFoods.addFood(new Food("A", 2000, 10.0, "27-03-2026")); // past, on goal
-        testFoods.addFood(new Food("B", 2000, 10.0, "15-04-2026")); // future
+        String pastDate = offsetDate(-1);
+        testFoods.addFood(new Food("A", 2000, 10.0, pastDate)); // past, on goal
+        testFoods.addFood(new Food("B", 2000, 10.0, offsetDate(10))); // future
         List<NutritionSummary> best = testFoods.getDaysClosestToGoal(2, 2000);
         assertEquals(1, best.size());
-        assertEquals("27-03-2026", best.get(0).getDate());
+        assertEquals(pastDate, best.get(0).getDate());
     }
 
     /**
@@ -1192,7 +1202,7 @@ class BitbitesTest {
      */
     @Test
     void historyCommand_futureDates_doesNotThrow() {
-        foodList.addFood(new Food("Future", 100, 10.0, "15-04-2026"));
+        foodList.addFood(new Food("Future", 100, 10.0, offsetDate(10)));
         assertDoesNotThrow(() -> Parser.parse("history").execute(context));
     }
 
@@ -1201,7 +1211,7 @@ class BitbitesTest {
      */
     @Test
     void historyTopCommand_futureDates_doesNotThrow() {
-        foodList.addFood(new Food("Future", 9999, 10.0, "15-04-2026"));
+        foodList.addFood(new Food("Future", 9999, 10.0, offsetDate(10)));
         assertDoesNotThrow(() -> Parser.parse("history /top 3").execute(context));
     }
 
@@ -1210,7 +1220,7 @@ class BitbitesTest {
      */
     @Test
     void historyBestCommand_futureDates_doesNotThrow() {
-        foodList.addFood(new Food("Future", 9999, 10.0, "15-04-2026"));
+        foodList.addFood(new Food("Future", 9999, 10.0, offsetDate(10)));
         assertDoesNotThrow(() -> Parser.parse("history /best 3").execute(context));
     }
 

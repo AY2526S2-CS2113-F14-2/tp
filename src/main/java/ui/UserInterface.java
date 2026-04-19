@@ -42,17 +42,29 @@ public class UserInterface {
     /// / READ section ////
     /* Reads a command from the user input. */
     public String readCommand() {
+        if (!this.scanner.hasNextLine()) {
+            return "exit";
+        }
         return this.scanner.nextLine();
+    }
+
+    /* Returns whether there is still user input available. */
+    public boolean hasInput() {
+        return this.scanner.hasNextLine();
     }
 
     /// / SHOW section ////
     /* Displays the welcome message and prompts the user for their name. */
-    public void showWelcome() {
+    public boolean showWelcome() {
         System.out.println(BitbitesResponses.WELCOME_MESSAGE);
 
         String name = "";
         while (true) {
             System.out.println("What is your name?");
+            if (!this.scanner.hasNextLine()) {
+                System.out.println(BitbitesResponses.EXIT_MESSAGE);
+                return false;
+            }
             name = this.scanner.nextLine().trim();
 
             if (name.isEmpty()) {
@@ -77,6 +89,7 @@ public class UserInterface {
             System.out.println("  profile set g/GENDER a/AGE w/WEIGHT h/HEIGHT");
         }
         System.out.println("Type 'help' for a list of available commands.");
+        return true;
     }
     //@@author
 
