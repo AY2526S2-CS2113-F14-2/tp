@@ -41,7 +41,7 @@ import parser.Parser;
 import storage.Storage;
 import ui.ProgressBar;
 import ui.UserInterface;
-
+ 
 class BitbitesTest {
 
     @TempDir
