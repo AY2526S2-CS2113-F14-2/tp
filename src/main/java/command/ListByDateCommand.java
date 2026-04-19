@@ -34,7 +34,8 @@ public class ListByDateCommand extends Command {
      *
      * @param context The application context containing the user's data, including the FoodList and UI.
      * @return false, indicating that the application should continue running after execution.
-     * @throws BitbitesException If the user fails to provide the "d/" prefix or leaves the date blank.
+    * @throws BitbitesException If the user fails to provide the "d/" prefix, leaves the date blank,
+    *                          or provides an invalid/impossible date.
      */
     @Override
     public boolean execute(AppContext context) {
@@ -50,6 +51,7 @@ public class ListByDateCommand extends Command {
         assert !words[1].isEmpty() : "Date should not be empty.";
 
         String date = words[1].trim();
+        validateDate(date);
         System.out.println(BitbitesResponses.LIST_FROM_DATE_MESSAGE + date + ":");
 
         int count = 1;

@@ -507,6 +507,28 @@ class BitbitesTest {
     }
 
     /**
+     * Verifies that malformed list-by-date input is rejected with date-format guidance.
+     */
+    @Test
+    void listByDateCommand_invalidDateFormat_throwsException() {
+        BitbitesException ex = assertThrows(BitbitesException.class, () ->
+                Parser.parse("list d/17-4-26").execute(context)
+        );
+        assertTrue(ex.getMessage().contains("Date must be in DD-MM-YYYY format."));
+    }
+
+    /**
+     * Verifies that impossible calendar dates are rejected.
+     */
+    @Test
+    void listByDateCommand_impossibleDate_throwsException() {
+        BitbitesException ex = assertThrows(BitbitesException.class, () ->
+                Parser.parse("list d/32-13-2026").execute(context)
+        );
+        assertTrue(ex.getMessage().contains("Invalid date: 32-13-2026"));
+    }
+
+    /**
      * Verifies that ListByDateCommand correctly filters when multiple dates exist.
      */
     @Test
