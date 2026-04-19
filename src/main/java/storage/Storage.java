@@ -54,7 +54,7 @@ public class Storage {
      */
     public ArrayList<Food> load() throws FileNotFoundException {
         ArrayList<Food> loadedFoods = new ArrayList<>();
-        boolean isPresetFile = filePath.contains("preset");
+        boolean isPresetFile = isPresetStorageFile();
         File file = new File(filePath);
 
         if (!file.exists()) {
@@ -101,6 +101,15 @@ public class Storage {
         }
 
         return loadedFoods;
+    }
+
+    /**
+     * Returns whether this storage path points to a presets file.
+     * Uses the file name suffix to avoid misclassifying usernames like "presetuser".
+     */
+    private boolean isPresetStorageFile() {
+        String fileName = new File(filePath).getName().toLowerCase();
+        return fileName.equals("presets.txt") || fileName.endsWith("_presets.txt");
     }
 
     /**

@@ -612,6 +612,25 @@ class BitbitesTest {
     }
 
     /**
+     * Verifies that food files are not misclassified as preset files
+     * when username-derived file names contain the substring "preset".
+     */
+    @Test
+    void storage_load_presetSubstringFoodFile() throws FileNotFoundException {
+        String trickyFoodPath = tempDir.resolve("presetuser_foods.txt").toString();
+        Storage trickyStorage = new Storage(trickyFoodPath);
+
+        FoodList listToSave = new FoodList();
+        listToSave.addFood(new Food("Oats", 100, 10.0, "17-04-2026"));
+        trickyStorage.save(listToSave);
+
+        ArrayList<Food> loadedFoods = trickyStorage.load();
+        assertEquals(1, loadedFoods.size());
+        assertEquals("Oats", loadedFoods.get(0).getName());
+        assertEquals("17-04-2026", loadedFoods.get(0).getDate());
+    }
+
+    /**
      * Verifies that loading from a directory path (not a file) throws BitbitesException.
      */
     @Test
